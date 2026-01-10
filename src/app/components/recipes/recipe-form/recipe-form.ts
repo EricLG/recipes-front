@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
-import { ingredient } from '../../../../models/ingredient';
+import { ingredient } from '../../../models/ingredient';
 import { IngredientService } from '../../../services/ingredient.service';
 import { RecipeService } from '../recipe.service';
 
