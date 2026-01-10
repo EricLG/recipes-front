@@ -1,20 +1,14 @@
 import { Component, signal } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { Layout } from './layout/layout';
 
 @Component({
     selector: 'app-root',
-    imports: [RouterOutlet],
-    template: `
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-      <div class="container-fluid">
-        <a class="navbar-brand" routerLink="/">Recettes</a>
-      </div>
-    </nav>
-
-    <router-outlet />
-  `,
+    imports: [Layout],
+    templateUrl: './app.html',
     styles: [],
 })
 export class App {
-    protected readonly title = signal('recipes');
+
+    protected readonly title = signal('La taverne de May');
+
 }
