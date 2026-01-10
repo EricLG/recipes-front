@@ -1,5 +1,5 @@
 export interface ingredient {
-    id: number;
+    id: string;
     name: string; // Colonne C
     kiloCalories: number; // Colonne D
     proteins: number; // Colonne E - Protéines
