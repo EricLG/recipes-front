@@ -1,8 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { FoodDto } from '../../models/food';
 
+import { FoodDto } from './../../models/food';
 
 const API_BASE_URL = '/api';
 

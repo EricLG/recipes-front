@@ -2,8 +2,9 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { Observable } from 'rxjs';
-import { FoodDto } from '../../../models/food';
-import { FoodService } from '../food.service';
+
+import { FoodDto } from './../../../models/food';
+import { FoodService } from './../food.service';
 
 @Component({
     selector: 'app-foods-list',

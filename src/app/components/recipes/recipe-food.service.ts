@@ -1,7 +1,7 @@
 // import { HttpClient } from '@angular/common/http';
 // import { Injectable } from '@angular/core';
 // import { Observable, map } from 'rxjs';
-// import { Recipe } from '../../models/recipe';
+// import { Recipe } from './../../models/recipe';
 
 // const API_BASE_URL = '/api';
 

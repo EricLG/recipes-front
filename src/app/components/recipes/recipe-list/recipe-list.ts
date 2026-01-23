@@ -2,8 +2,9 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { Observable } from 'rxjs';
-import { RecipeService } from '../recipe.service';
+
 import { RecipeDto } from './../../../models/recipe';
+import { RecipeService } from './../recipe.service';
 
 @Component({
     selector: 'recipe-list',

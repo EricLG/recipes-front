@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+
 import { FoodDetail } from './components/foods/food-detail/food-detail';
 import { FoodsList } from './components/foods/foods-list/foods-list';
 import { Home } from './components/home/home';

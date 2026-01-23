@@ -1,8 +1,9 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { FoodDto } from '../../../models/food';
-import { FoodService } from '../food.service';
+
+import { FoodDto } from './../../../models/food';
+import { FoodService } from './../food.service';
 
 @Component({
     selector: 'app-food-detail',
