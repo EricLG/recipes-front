@@ -1,0 +1,13 @@
+@if (food) {
+    <h2>{{ food.name }}</h2>
+    <div>
+        <p><strong>Kcal:</strong> {{ food.nutrientsPer100.energyKcal }}</p>
+        <p><strong>Protéines:</strong> {{ food.nutrientsPer100.proteins }}</p>
+        <p><strong>Lipides:</strong> {{ food.nutrientsPer100.fats }}</p>
+        <p><strong>Glucides:</strong> {{ food.nutrientsPer100.carbohydrates }}</p>
+        <p><strong>Fibres:</strong> {{ food.nutrientsPer100.fibers }}</p>
+
+    </div>
+} @else {
+    <h2>Aucune nourriture trouvée</h2>
+}

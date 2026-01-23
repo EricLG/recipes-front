@@ -9,7 +9,7 @@
             <a class="list-group-item list-group-item-action d-flex justify-content-between align-items-center" [routerLink]="['/recipes', recipe.id]">
                 <div>
                     <div class="fw-bold">{{ recipe.name }}</div>
-                    <small class="text-muted">{{ recipe.nbParts }} parts · {{ recipe.totalKiloCaloriesPerPortion }} kcal par portion</small>
+                    <small class="text-muted">{{ recipe.servings }} parts</small>
                 </div>
                 <span class="badge bg-secondary">Détails</span>
             </a>

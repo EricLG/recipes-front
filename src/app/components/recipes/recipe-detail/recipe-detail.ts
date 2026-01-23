@@ -1,8 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { Recipe } from '../../../models/recipe';
-import { RecipeService } from '../recipe.service';
+import { RecipeDto } from './../../../models/recipe';
+import { RecipeService } from './../recipe.service';
 
 @Component({
     selector: 'recipe-detail',
@@ -12,7 +12,7 @@ import { RecipeService } from '../recipe.service';
     changeDetection: ChangeDetectionStrategy.Default
 })
 export class RecipeDetail implements OnInit {
-    recipe: Recipe | undefined;
+    recipe: RecipeDto | undefined;
     id: string;
 
     constructor(

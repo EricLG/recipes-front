@@ -2,9 +2,9 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
-import { ingredient } from '../../../models/ingredient';
-import { IngredientService } from '../../../services/ingredient.service';
+import { FoodService } from '../../foods/food.service';
 import { RecipeService } from '../recipe.service';
+import { FoodDto } from './../../../models/food';
 
 interface QtyIngredientForm {
     ingredientId: string;
@@ -20,12 +20,12 @@ interface QtyIngredientForm {
 })
 export class RecipeForm implements OnInit {
     public form: FormGroup;
-    public availableIngredients: ingredient[] = [];
+    public availableIngredients: FoodDto[] = [];
 
     constructor(
         private fb: FormBuilder,
         private svc: RecipeService,
-        private ingSvc: IngredientService,
+        private ingSvc: FoodService,
         private router: Router
     ) {
         this.form = this.fb.group({

@@ -1,23 +1,23 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ingredient } from '../../../models/ingredient';
-import { IngredientService } from '../../../services/ingredient.service';
+import { FoodDto } from '../../../models/food';
+import { FoodService } from '../food.service';
 
 @Component({
-    selector: 'app-ingredient-detail',
+    selector: 'app-food-detail',
     imports: [CommonModule],
-    templateUrl: './ingredient-detail.html',
-    styleUrl: './ingredient-detail.scss',
+    templateUrl: './food-detail.html',
+    styleUrl: './food-detail.scss',
 })
-export class IngredientDetail {
+export class FoodDetail {
 
-    public ingredient: ingredient | undefined;
+    public food?: FoodDto;
     public id: string;
 
     constructor(
         private route: ActivatedRoute,
-        private svc: IngredientService,
+        private svc: FoodService,
         private router: Router
     ) {
         const param = this.route.snapshot.paramMap.get('id');
@@ -26,15 +26,15 @@ export class IngredientDetail {
 
     ngOnInit() {
         this.svc.getById(this.id).subscribe({
-            next: (data) => this.ingredient = data,
+            next: (data) => this.food = data,
             error: (err) => console.error('Erreur chargement ingrédient:', err)
         });
     }
 
     remove() {
-        if (!this.ingredient) return;
+        if (!this.food) return;
         if (confirm('Supprimer cet ingrédient ?')) {
-            this.svc.delete(this.ingredient.id).subscribe({
+            this.svc.delete(this.food.id).subscribe({
                 next: () => this.router.navigate(['/']),
                 error: (err) => console.error('Erreur suppression:', err)
             });

@@ -2,8 +2,8 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { Observable } from 'rxjs';
-import { Recipe } from '../../../models/recipe';
 import { RecipeService } from '../recipe.service';
+import { RecipeDto } from './../../../models/recipe';
 
 @Component({
     selector: 'recipe-list',
@@ -13,7 +13,7 @@ import { RecipeService } from '../recipe.service';
 })
 export class RecipeList {
 
-    public recipes$!: Observable<Recipe[]>
+    public recipes$!: Observable<RecipeDto[]>
 
     constructor(private svc: RecipeService) {
         this.recipes$ = this.svc.getAll();

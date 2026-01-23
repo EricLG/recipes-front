@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, map } from 'rxjs';
-import { Recipe } from '../../models/recipe';
+import { Observable } from 'rxjs';
+import { RecipeDto } from './../../models/recipe';
 
 const API_BASE_URL = '/api';
 
@@ -10,44 +10,20 @@ export class RecipeService {
 
     constructor(private http: HttpClient) {}
 
-    getAll(): Observable<Recipe[]> {
-        return this.http.get<Recipe[]>(`${API_BASE_URL}/recipes`).pipe(
-            map(recipes => recipes.map(r => new Recipe(
-                r.id,
-                r.name,
-                r.ingredients,
-                r.instructions,
-                r.season,
-                r.vegetarian,
-                r.nbParts,
-                r.category,
-                r.subCourses
-            )))
-        );
+    getAll(): Observable<RecipeDto[]> {
+        return this.http.get<RecipeDto[]>(`${API_BASE_URL}/recipes`)
     }
 
-    getById(id: string): Observable<Recipe | undefined> {
-        return this.http.get<Recipe>(`${API_BASE_URL}/recipes/${id}`).pipe(
-            map(recipe => recipe ? new Recipe(
-                recipe.id,
-                recipe.name,
-                recipe.ingredients,
-                recipe.instructions,
-                recipe.season,
-                recipe.vegetarian,
-                recipe.nbParts,
-                recipe.category,
-                recipe.subCourses
-            ) : undefined)
-        );
+    getById(id: string): Observable<RecipeDto | undefined> {
+        return this.http.get<RecipeDto>(`${API_BASE_URL}/recipes/${id}`)
     }
 
-    create(recipe: Omit<Recipe, 'id'>): Observable<Recipe> {
-        return this.http.post<Recipe>(`${API_BASE_URL}/recipes`, recipe);
+    create(recipe: Omit<RecipeDto, 'id'>): Observable<RecipeDto> {
+        return this.http.post<RecipeDto>(`${API_BASE_URL}/recipes`, recipe);
     }
 
-    update(recipe: Recipe): Observable<Recipe> {
-        return this.http.put<Recipe>(`${API_BASE_URL}/recipes/${recipe.id}`, recipe);
+    update(recipe: RecipeDto): Observable<RecipeDto> {
+        return this.http.put<RecipeDto>(`${API_BASE_URL}/recipes/${recipe.id}`, recipe);
     }
 
     delete(id: string): Observable<void> {
