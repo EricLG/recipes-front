@@ -8,6 +8,7 @@ const API_BASE_URL = '/api';
 
 @Injectable({ providedIn: 'root' })
 export class FoodService {
+
     constructor(private http: HttpClient) {}
 
     getAll(): Observable<FoodDto[]> {

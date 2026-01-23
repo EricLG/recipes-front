@@ -18,6 +18,7 @@ export interface NutrientsDto {
 }
 
 export interface MeasureDto {
+    id: string;
     foodId: string;
     label: string;
     grams: number;

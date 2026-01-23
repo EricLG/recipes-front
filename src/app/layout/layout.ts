@@ -19,7 +19,7 @@ export class Layout {
 
     public links = [
         { title: 'Recettes', path: 'recipes' },
-        { title: 'Foods', path: 'foods' }
+        { title: 'Ingrédients', path: 'foods' }
     ];
 
     constructor(
