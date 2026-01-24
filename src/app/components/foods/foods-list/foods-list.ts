@@ -20,11 +20,4 @@ export class FoodsList {
         this.food$ = this.svc.getAll();
     }
 
-    get kiloCalories() {
-        let total = 0;
-        this.food$.subscribe(foods => {
-            total = foods.reduce((sum, food) => sum + food.nutrientsPer100.energyKcal, 0);
-        });
-        return total;
-    }
 }

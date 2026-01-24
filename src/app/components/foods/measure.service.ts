@@ -12,23 +12,23 @@ export class MeasureService {
     constructor(private http: HttpClient) {}
 
     getAll(): Observable<MeasureDto[]> {
-        return this.http.get<MeasureDto[]>(`${API_BASE_URL}/measure`);
+        return this.http.get<MeasureDto[]>(`${API_BASE_URL}/measures`);
     }
 
     getById(id: string): Observable<MeasureDto | undefined> {
-        return this.http.get<MeasureDto>(`${API_BASE_URL}/measure/${id}`);
+        return this.http.get<MeasureDto>(`${API_BASE_URL}/measures/${id}`);
     }
 
     create(measure: Omit<MeasureDto, 'id'>): Observable<MeasureDto> {
-        return this.http.post<MeasureDto>(`${API_BASE_URL}/measure`, measure);
+        return this.http.post<MeasureDto>(`${API_BASE_URL}/measures`, measure);
     }
 
     update(measure: MeasureDto): Observable<MeasureDto> {
-        return this.http.put<MeasureDto>(`${API_BASE_URL}/measure/${measure.id}`, measure);
+        return this.http.put<MeasureDto>(`${API_BASE_URL}/measures/${measure.id}`, measure);
     }
 
     delete(id: string): Observable<void> {
-        return this.http.delete<void>(`${API_BASE_URL}/measure/${id}`);
+        return this.http.delete<void>(`${API_BASE_URL}/measures/${id}`);
     }
 
     getAllMeasuresByFoodId(foodId: string): Observable<MeasureDto[]> {

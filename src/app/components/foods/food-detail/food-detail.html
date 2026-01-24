@@ -28,17 +28,22 @@
     </table>
 
     <div>
-        <h3>Mesures</h3>
+        <h3>Portions</h3>
         @if (measures(); as measures) {
-            <ul>
+            <ul class="list-group mb-3">
                 @for (measure of measures; track measure.id) {
-                    <li>{{ measure.label }} - {{ measure.grams }}g</li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        {{ measure.label }} - {{ measure.grams }}g
+                        <button class="btn btn-sm btn-outline-primary" (click)="editMeasure(measure)">Modifier</button>
+                    </li>
                 }
             </ul>
         }
+        <button class="btn btn-primary" (click)="addMeasure()">Ajouter une portion</button>
     </div>
     <div>
-        <button class="float-end btn btn-danger" (click)="remove()">Supprimer</button>
+        <button class="float-end btn btn-danger" disabled (click)="remove()">Supprimer</button> <!-- TODO : remove all relations linked to food before deleting -->
+        <button class="float-end btn btn-secondary" (click)="edit()">Modifier</button>
     </div>
 
 } @else {

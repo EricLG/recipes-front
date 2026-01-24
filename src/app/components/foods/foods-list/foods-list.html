@@ -1,7 +1,7 @@
 <div class="container mt-3">
     <div class="d-flex justify-content-between align-items-center mb-3">
-        <h2>Foods</h2>
-        <a class="btn btn-primary" routerLink="/add">Ajouter un food</a>
+        <h2>Ingrédients</h2>
+        <a class="btn btn-primary" routerLink="/foods/add">Ajouter un ingrédient</a>
     </div>
 
     <div class="list-group">
@@ -9,7 +9,7 @@
             <a class="list-group-item list-group-item-action d-flex justify-content-between align-items-center" [routerLink]="['/foods', food.id]">
                 <div>
                     <div class="fw-bold">{{ food.name }}</div>
-                    <small class="text-muted">{{ kiloCalories }} kcal</small>
+                    <small class="text-muted">{{ food.nutrientsPer100.energyKcal }} kcal</small>
                 </div>
                 <span class="badge bg-secondary">Détails</span>
             </a>

@@ -1,1 +1,117 @@
-<p>ingredient-form works!</p>
+<h2>{{ title() }}</h2>
+
+<form [formGroup]="foodForm" (ngSubmit)="onSubmit()" role="form">
+    <div class="mb-3">
+        <label for="name" class="form-label">Nom :</label>
+        <input id="name" type="text" class="form-control" formControlName="name" required aria-describedby="name-error">
+        @if (foodForm.get('name')?.invalid && foodForm.get('name')?.touched) {
+            <div id="name-error" class="invalid-feedback">
+                Le nom est requis.
+            </div>
+        }
+    </div>
+
+    <div class="mb-3">
+        <label for="referenceUnit" class="form-label">Unité de référence :</label>
+        <input id="referenceUnit" type="text" class="form-control" formControlName="referenceUnit" required aria-describedby="referenceUnit-error">
+        @if (foodForm.get('referenceUnit')?.invalid && foodForm.get('referenceUnit')?.touched) {
+            <div id="referenceUnit-error" class="invalid-feedback">
+                L'unité de référence est requise.
+            </div>
+        }
+    </div>
+
+    <div class="mb-3">
+        <label for="density" class="form-label">Densité :</label>
+        <input id="density" type="number" class="form-control" formControlName="density" required min="0" step="0.01" aria-describedby="density-error">
+        @if (foodForm.get('density')?.invalid && foodForm.get('density')?.touched) {
+            <div id="density-error" class="invalid-feedback">
+                La densité doit être un nombre positif.
+            </div>
+        }
+    </div>
+
+    <div class="form-check mb-3">
+        <input id="needReview" type="checkbox" class="form-check-input" formControlName="needReview">
+        <label for="needReview" class="form-check-label">Nécessite une révision</label>
+    </div>
+
+    <fieldset class="mb-3" formGroupName="nutrientsPer100">
+        <legend>Nutriments pour 100g :</legend>
+        <div class="row">
+            <div class="col-12 col-md-6 col-lg-4 mb-3">
+                <label for="energyKcal" class="form-label">Énergie (kcal) :</label>
+                <input id="energyKcal" type="number" class="form-control" formControlName="energyKcal" required min="0" step="0.01" aria-describedby="energyKcal-error">
+                @if (foodForm.get('nutrientsPer100.energyKcal')?.invalid && foodForm.get('nutrientsPer100.energyKcal')?.touched) {
+                    <div id="energyKcal-error" class="invalid-feedback">
+                        L'énergie doit être un nombre positif.
+                    </div>
+                }
+            </div>
+
+            <div class="col-12 col-md-6 col-lg-4 mb-3">
+                <label for="proteins" class="form-label">Protéines (g) :</label>
+                <input id="proteins" type="number" class="form-control" formControlName="proteins" required min="0" step="0.01" aria-describedby="proteins-error">
+                @if (foodForm.get('nutrientsPer100.proteins')?.invalid && foodForm.get('nutrientsPer100.proteins')?.touched) {
+                    <div id="proteins-error" class="invalid-feedback">
+                        Les protéines doivent être un nombre positif.
+                    </div>
+                }
+            </div>
+
+            <div class="col-12 col-md-6 col-lg-4 mb-3">
+                <label for="fats" class="form-label">Lipides (g) :</label>
+                <input id="fats" type="number" class="form-control" formControlName="fats" required min="0" step="0.01" aria-describedby="fats-error">
+                @if (foodForm.get('nutrientsPer100.fats')?.invalid && foodForm.get('nutrientsPer100.fats')?.touched) {
+                    <div id="fats-error" class="invalid-feedback">
+                        Les lipides doivent être un nombre positif.
+                    </div>
+                }
+            </div>
+
+            <div class="col-12 col-md-6 col-lg-4 mb-3">
+                <label for="carbohydrates" class="form-label">Glucides (g) :</label>
+                <input id="carbohydrates" type="number" class="form-control" formControlName="carbohydrates" required min="0" step="0.01" aria-describedby="carbohydrates-error">
+                @if (foodForm.get('nutrientsPer100.carbohydrates')?.invalid && foodForm.get('nutrientsPer100.carbohydrates')?.touched) {
+                    <div id="carbohydrates-error" class="invalid-feedback">
+                        Les glucides doivent être un nombre positif.
+                    </div>
+                }
+            </div>
+
+            <div class="col-12 col-md-6 col-lg-4 mb-3">
+                <label for="sugars" class="form-label">Sucres (g) :</label>
+                <input id="sugars" type="number" class="form-control" formControlName="sugars" required min="0" step="0.01" aria-describedby="sugars-error">
+                @if (foodForm.get('nutrientsPer100.sugars')?.invalid && foodForm.get('nutrientsPer100.sugars')?.touched) {
+                    <div id="sugars-error" class="invalid-feedback">
+                        Les sucres doivent être un nombre positif.
+                    </div>
+                }
+            </div>
+
+            <div class="col-12 col-md-6 col-lg-4 mb-3">
+                <label for="fibers" class="form-label">Fibres (g) :</label>
+                <input id="fibers" type="number" class="form-control" formControlName="fibers" required min="0" step="0.01" aria-describedby="fibers-error">
+                @if (foodForm.get('nutrientsPer100.fibers')?.invalid && foodForm.get('nutrientsPer100.fibers')?.touched) {
+                    <div id="fibers-error" class="invalid-feedback">
+                        Les fibres doivent être un nombre positif.
+                    </div>
+                }
+            </div>
+
+            <div class="col-12 col-md-6 col-lg-4 mb-3">
+                <label for="salt" class="form-label">Sel (g) :</label>
+                <input id="salt" type="number" class="form-control" formControlName="salt" required min="0" step="0.01" aria-describedby="salt-error">
+                @if (foodForm.get('nutrientsPer100.salt')?.invalid && foodForm.get('nutrientsPer100.salt')?.touched) {
+                    <div id="salt-error" class="invalid-feedback">
+                        Le sel doit être un nombre positif.
+                    </div>
+                }
+            </div>
+        </div>
+    </fieldset>
+    <div class="btn-group" role="group" aria-label="Basic example">
+        <a type="button" class="btn btn-secondary" routerLink="/foods">Annuler</a>
+        <button type="submit" class="btn btn-primary" [disabled]="foodForm.invalid">Enregistrer</button>
+    </div>
+</form>
