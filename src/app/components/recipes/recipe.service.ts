@@ -32,6 +32,6 @@ export class RecipeService {
     }
 
     getDetailRecipe(id: string): Observable<DetailedRecipeDTO> {
-        return this.http.get<DetailedRecipeDTO>(`${API_BASE_URL}/recipes/detail${id}`);
+        return this.http.get<DetailedRecipeDTO>(`${API_BASE_URL}/recipes/detail/${id}`);
     }
 }

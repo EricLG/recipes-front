@@ -1,1 +1,42 @@
-<!---->
+<div class="container mt-3">
+    <h2>{{ title() }}</h2>
+
+    <form [formGroup]="recipeForm" (ngSubmit)="onSubmit()">
+        <div class="mb-3">
+            <label for="name" class="form-label">Nom de la recette</label>
+            <input type="text" class="form-control" id="name" formControlName="name" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="instructions" class="form-label">Instructions</label>
+            <textarea class="form-control" id="instructions" formControlName="instructions" rows="5"></textarea>
+        </div>
+
+        <div class="mb-3">
+            <label for="servings" class="form-label">Nombre de parts</label>
+            <input type="number" class="form-control" id="servings" formControlName="servings" min="1" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="category" class="form-label">Catégorie</label>
+            <select class="form-select" id="category" formControlName="category">
+                <option *ngFor="let cat of categories" [value]="cat">{{ cat }}</option>
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label for="season" class="form-label">Saison</label>
+            <select class="form-select" id="season" formControlName="season">
+                <option *ngFor="let season of seasons" [value]="season">{{ season }}</option>
+            </select>
+        </div>
+
+        <div class="mb-3 form-check">
+            <input type="checkbox" class="form-check-input" id="vegetarian" formControlName="vegetarian">
+            <label class="form-check-label" for="vegetarian">Végétarien</label>
+        </div>
+
+        <button type="submit" class="btn btn-primary" [disabled]="recipeForm.invalid">Sauvegarder</button>
+        <a class="btn btn-secondary ms-2" routerLink="/recipes">Annuler</a>
+    </form>
+</div>

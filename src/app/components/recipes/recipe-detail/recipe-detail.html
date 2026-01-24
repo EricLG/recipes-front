@@ -1,4 +1,4 @@
-@if (recipe) {
+@if (recipe(); as recipe) {
 <div class="container mt-3">
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h2>{{ recipe.name }}</h2>
@@ -9,17 +9,49 @@
     </div>
 
     <div class="mb-2"><strong>Parts:</strong> {{ recipe.servings }}</div>
-    <div class="mb-2"><strong>Kcal:</strong> {{ 'TODO' }}</div>
+    <div class="mb-2"><strong>Kcal:</strong> {{ (totalNutrients()?.energyKcal || 0).toFixed(0) }}</div>
     <div class="mb-2"><strong>Saison:</strong> {{ recipe.season }}</div>
     <div class="mb-2"><strong>Végétarien:</strong> {{ recipe.vegetarian ? 'Oui' : 'Non' }}</div>
 
     <h5>Ingrédients</h5>
     <ul class="list-group mb-3">
-        <li>TODO: recupérer ingrédients</li>
+        @for (measure of recipe.measures; track measure.recipeId + measure.measureId.label) {
+            <li class="list-group-item">
+                {{ measure.quantity }} {{ measure.measureId.label }} de {{ measure.measureId.foodId.name }}
+            </li>
+        }
     </ul>
 
-    <h5>Valeurs nutrionnelles</h5>
-    <p>TODO: calculer valeurs nutritionnelles</p>
+    <h5>Valeurs nutritionnelles (pour 1 part)</h5>
+    @if (totalNutrients(); as nutrients) {
+        <table class="table">
+            <caption>Valeurs nutritionnelles pour 1 part</caption>
+            <thead>
+                <tr>
+                    <th scope="col">Kcal</th>
+                    <th scope="col">Protéines</th>
+                    <th scope="col">Lipides</th>
+                    <th scope="col">Glucides</th>
+                    <th scope="col">Sucres</th>
+                    <th scope="col">Fibres</th>
+                    <th scope="col">Sel</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>{{ nutrients.energyKcal.toFixed(0) }}</td>
+                    <td>{{ nutrients.proteins.toFixed(1) }}</td>
+                    <td>{{ nutrients.fats.toFixed(1) }}</td>
+                    <td>{{ nutrients.carbohydrates.toFixed(1) }}</td>
+                    <td>{{ nutrients.sugars.toFixed(1) }}</td>
+                    <td>{{ nutrients.fibers.toFixed(1) }}</td>
+                    <td>{{ nutrients.salt.toFixed(2) }}</td>
+                </tr>
+            </tbody>
+        </table>
+    } @else {
+        <p>Calcul en cours...</p>
+    }
 
     <h5>Instructions</h5>
     <p class="pre-line">{{ recipe.instructions || '—' }}</p>
@@ -27,6 +59,6 @@
 } @else {
     <div class="container mt-3">
         <div class="alert alert-warning">Recette introuvable.</div>
-        <a class="btn btn-secondary" routerLink="/">Retour à la liste</a>
+        <a class="btn btn-secondary" routerLink="/recipes">Retour à la liste des recettes</a>
     </div>
 }
