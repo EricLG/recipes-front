@@ -1,8 +1,8 @@
 import js from '@eslint/js';
-import importPlugin from 'eslint-plugin-import';
 import { defineConfig } from 'eslint/config';
+import importPlugin from 'eslint-plugin-import';
 import globals from 'globals';
-import tseslint from 'typescript-eslint';
+import { configs } from 'typescript-eslint';
 
 export default defineConfig([
     {
@@ -15,8 +15,8 @@ export default defineConfig([
         ],
         settings: {
             "import/resolver": {
-            "typescript": true,
-            "node": true,
+                "typescript": true,
+                "node": true,
             },
         },
         languageOptions: { globals: globals.browser },
@@ -31,5 +31,5 @@ export default defineConfig([
             "import/no-absolute-path": "error",
         },
     },
-    tseslint.configs.recommended,
+    configs.recommended,
 ]);

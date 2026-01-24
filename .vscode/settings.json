@@ -2,7 +2,7 @@
   "git.ignoreLimitWarning": true,
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": "explicit",
-    "source.organizeImports": "explicit"
+    "source.organizeImports": "never"
   },
   "files.trimTrailingWhitespace": true,
   "files.trimFinalNewlines": true,
