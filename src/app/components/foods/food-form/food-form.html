@@ -12,6 +12,20 @@
     </div>
 
     <div class="mb-3">
+        <label for="category" class="form-label">Catégorie :</label>
+        <select id="category" class="form-select" formControlName="category" required aria-describedby="category-error">
+            @for (cat of categories; track cat) {
+                <option [value]="cat">{{ cat }}</option>
+            }
+        </select>
+        @if (foodForm.get('category')?.invalid && foodForm.get('category')?.touched) {
+            <div id="category-error" class="invalid-feedback">
+                La catégorie est requise.
+            </div>
+        }
+    </div>
+
+    <div class="mb-3">
         <label for="referenceUnit" class="form-label">Unité de référence :</label>
         <input id="referenceUnit" type="text" class="form-control" formControlName="referenceUnit" required aria-describedby="referenceUnit-error">
         @if (foodForm.get('referenceUnit')?.invalid && foodForm.get('referenceUnit')?.touched) {

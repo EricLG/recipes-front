@@ -1,6 +1,9 @@
+import { FoodCategory } from './../enums/food.enum';
+
 export interface FoodDto {
     id: string
     name: string;
+    category: FoodCategory;
     referenceUnit: string;
     density: number;
     nutrientsPer100: NutrientsDto;

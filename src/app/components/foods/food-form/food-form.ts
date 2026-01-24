@@ -13,6 +13,7 @@ import { filter, map, switchMap } from 'rxjs/operators';
 
 import { FoodDto } from '../../../models/food';
 import { FoodService } from '../food.service';
+import { FoodCategory } from '../../../enums/food.enum';
 
 @Component({
     selector: 'app-food-form',
@@ -47,8 +48,12 @@ export class FoodForm {
     // Dynamic title based on whether adding or editing
     public readonly title = computed(() => this.id() ? 'Modifier un ingrédient' : 'Ajouter un ingrédient');
 
+    // Enums for dropdowns
+    public readonly categories = Object.values(FoodCategory);
+
     public readonly foodForm = this.fb.group({
         name: ['', Validators.required],
+        category: [FoodCategory.OTHERS, Validators.required],
         referenceUnit: ['', Validators.required],
         density: [0, [Validators.required, Validators.min(0)]],
         needReview: [false],
