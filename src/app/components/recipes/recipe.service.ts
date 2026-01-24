@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
-import { RecipeDto } from './../../models/recipe';
+import { RecipeDto, DetailedRecipeDTO } from './../../models/recipe';
 
 const API_BASE_URL = '/api';
 
@@ -31,4 +31,7 @@ export class RecipeService {
         return this.http.delete<void>(`${API_BASE_URL}/recipes/${id}`);
     }
 
+    getDetailRecipe(id: string): Observable<DetailedRecipeDTO> {
+        return this.http.get<DetailedRecipeDTO>(`${API_BASE_URL}/recipes/detail${id}`);
+    }
 }

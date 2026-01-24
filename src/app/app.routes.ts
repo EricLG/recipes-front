@@ -12,6 +12,7 @@ export const routes: Routes = [
     { path: '', component: Home },
     { path: 'recipes', component: RecipeList },
     { path: 'recipes/add', component: RecipeForm },
+    { path: 'recipes/edit/:id', component: RecipeForm },
     { path: 'recipes/:id', component: RecipeDetail },
     { path: 'foods', component: FoodsList },
     { path: 'foods/add', component: FoodForm },
