@@ -37,7 +37,7 @@ export class RecipeDetail {
     // Compute total nutrients
     public readonly totalNutrients = computed(() => {
         const recipe = this.recipe();
-        if (!recipe || !recipe.measures) return null;
+        if (!recipe || !recipe.recipeFoods) return null;
 
         const totals: NutrientsDto = {
             energyKcal: 0,
@@ -49,10 +49,10 @@ export class RecipeDetail {
             salt: 0
         };
 
-        recipe.measures.forEach(measure => {
-            const quantity = measure.quantity;
-            const grams = measure.measureId.grams;
-            const nutrients = measure.measureId.foodId.nutrientsPer100;
+        recipe.recipeFoods.forEach(recipeFood => {
+            const quantity = recipeFood.quantity;
+            const grams = recipeFood.measure.grams;
+            const nutrients = recipeFood.measure.foodId.nutrientsPer100;
 
             const factor = (quantity * grams) / 100;
 

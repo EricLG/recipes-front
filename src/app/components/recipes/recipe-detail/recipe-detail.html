@@ -15,9 +15,9 @@
 
     <h5>Ingrédients</h5>
     <ul class="list-group mb-3">
-        @for (measure of recipe.measures; track measure.recipeId + measure.measureId.label) {
+        @for (recipeFood of recipe.recipeFoods; track recipeFood.recipeId + recipeFood.measure.label) {
             <li class="list-group-item">
-                {{ measure.quantity }} {{ measure.measureId.label }} de {{ measure.measureId.foodId.name }}
+                {{ recipeFood.quantity }} {{ recipeFood.measure.label }} de {{ recipeFood.measure.foodId.name }}
             </li>
         }
     </ul>

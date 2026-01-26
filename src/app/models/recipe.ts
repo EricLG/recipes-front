@@ -26,10 +26,10 @@ export interface DetailedRecipeDTO {
     season?: RecipeSeason;
     category: RecipeCategory;
     servings: number;
-    measures:  {
+    recipeFoods: {
         recipeId: string;
         quantity: number;
-        measureId: {
+        measure: {
             label: string;
             grams: number;
             isDefault: boolean;
