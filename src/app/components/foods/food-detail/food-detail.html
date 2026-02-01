@@ -1,52 +1,87 @@
 @if (food(); as food ) {
-    <h2 class="mb-3">{{ food.name }}</h2>
-    <p>Catégorie : {{ food.category }}</p>
+    <div class="container mt-3 mb-5">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h2 class="mb-2">{{ food.name }}</h2>
+                <p class="text-muted"><strong>Catégorie :</strong> {{ food.category }}</p>
+            </div>
+            <div>
+                <a class="btn btn-secondary me-2" routerLink="/foods">Retour</a>
+                <button class="btn btn-primary me-2" (click)="edit()">Modifier</button>
+                <button class="btn btn-danger" (click)="remove()">Supprimer</button>
+            </div>
+        </div>
 
-    <table class="table">
-        <caption>Valeurs nutritionnelles pour 100g</caption>
-        <thead>
-            <tr>
-                <th scope="col">Kcal</th>
-                <th scope="col">Protéines</th>
-                <th scope="col">Lipides</th>
-                <th scope="col">Glucides</th>
-                <th scope="col">Sucres</th>
-                <th scope="col">Fibres</th>
-                <th scope="col">Sel</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>{{ food.nutrientsPer100.energyKcal }}</td>
-                <td>{{ food.nutrientsPer100.proteins }}</td>
-                <td>{{ food.nutrientsPer100.fats }}</td>
-                <td>{{ food.nutrientsPer100.carbohydrates }}</td>
-                <td>{{ food.nutrientsPer100.sugars }}</td>
-                <td>{{ food.nutrientsPer100.fibers }}</td>
-                <td>{{ food.nutrientsPer100.salt }}</td>
-            </tr>
-        </tbody>
-    </table>
+        <div class="mb-4">
+            <p><strong>Unité de référence :</strong> {{ food.referenceUnit }}</p>
+            <p><strong>Densité :</strong> {{ food.density }}</p>
+            @if (food.needReview) {
+                <div class="alert alert-warning" role="alert">
+                    Cet ingrédient nécessite une révision.
+                </div>
+            } @else {
+                <div class="alert alert-success" role="alert">
+                    Cet ingrédient ne nécessite pas de révision.
+                </div>
+            }
+        </div>
 
-    <div>
-        <h3>Portions</h3>
-        @if (measures(); as measures) {
-            <ul class="list-group mb-3">
-                @for (measure of measures; track measure.id) {
-                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                        {{ measure.label }} - {{ measure.grams }}g
-                        <button class="btn btn-sm btn-outline-primary" (click)="editMeasure(measure)">Modifier</button>
-                    </li>
-                }
-            </ul>
-        }
-        <button class="btn btn-primary" (click)="addMeasure()">Ajouter une portion</button>
+        <div class="mb-4">
+            <h5 class="mb-3">Valeurs nutritionnelles pour 100g</h5>
+            <table class="table table-hover">
+                <thead class="table-light">
+                    <tr>
+                        <th scope="col">Kcal</th>
+                        <th scope="col">Protéines (g)</th>
+                        <th scope="col">Lipides (g)</th>
+                        <th scope="col">Glucides (g)</th>
+                        <th scope="col">Sucres (g)</th>
+                        <th scope="col">Fibres (g)</th>
+                        <th scope="col">Sel (g)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>{{ food.nutrientsPer100.energyKcal }}</td>
+                        <td>{{ (food.nutrientsPer100.proteins).toFixed(1) }}</td>
+                        <td>{{ (food.nutrientsPer100.fats).toFixed(1) }}</td>
+                        <td>{{ (food.nutrientsPer100.carbohydrates).toFixed(1) }}</td>
+                        <td>{{ (food.nutrientsPer100.sugars).toFixed(1) }}</td>
+                        <td>{{ (food.nutrientsPer100.fibers).toFixed(1) }}</td>
+                        <td>{{ (food.nutrientsPer100.salt).toFixed(2) }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="mb-4">
+            <h5 class="mb-3">Portions</h5>
+            @if (food.measures && food.measures.length > 0) {
+                <div class="list-group">
+                    @for (measure of food.measures; track measure.id) {
+                        <div class="list-group-item">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <strong>{{ measure.label }}</strong>
+                                    <span class="ms-2 text-muted">{{ measure.grams }}g</span>
+                                    @if (measure.isDefault) {
+                                        <span class="ms-2 badge bg-success">Défaut</span>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            } @else {
+                <p class="text-muted">Aucune portion définie.</p>
+            }
+        </div>
     </div>
-    <div>
-        <button class="float-end btn btn-danger" disabled (click)="remove()">Supprimer</button> <!-- TODO : remove all relations linked to food before deleting -->
-        <button class="float-end btn btn-secondary" (click)="edit()">Modifier</button>
-    </div>
-
 } @else {
-    <h2>Aucune nourriture trouvée</h2>
+    <div class="container mt-3">
+        <div class="alert alert-warning" role="alert">
+            Ingrédient non trouvé.
+        </div>
+        <a class="btn btn-secondary" routerLink="/foods">Retour à la liste</a>
+    </div>
 }

@@ -49,10 +49,11 @@ export class RecipeDetail {
             salt: 0
         };
 
+        // Process recipe foods
         recipe.recipeFoods.forEach(recipeFood => {
             const quantity = recipeFood.quantity;
             const grams = recipeFood.measure.grams;
-            const nutrients = recipeFood.measure.foodId.nutrientsPer100;
+            const nutrients = recipeFood.food.nutrientsPer100;
 
             const factor = (quantity * grams) / 100;
 
@@ -64,6 +65,11 @@ export class RecipeDetail {
             totals.fibers += nutrients.fibers * factor;
             totals.salt += nutrients.salt * factor;
         });
+
+        // TODO: Process recipe sub-recipes when backend is ready
+        // recipe.recipeSubRecipes?.forEach(subRecipe => {
+        //     // Get nutrients from sub-recipe and multiply by quantity
+        // });
 
         // Divide by servings to get nutrients per serving
         const servings = recipe.servings;
@@ -78,7 +84,15 @@ export class RecipeDetail {
         return totals;
     });
 
-    remove() {
+    public edit(): void {
+        const recipe = this.recipe();
+
+        console.log('Editing recipe:', recipe);
+        if (!recipe) return;
+        this.router.navigate(['/recipes/edit', recipe.id]);
+    }
+
+    public remove(): void {
         const recipe = this.recipe();
         if (!recipe) return;
         if (confirm('Supprimer cette recette ?')) {

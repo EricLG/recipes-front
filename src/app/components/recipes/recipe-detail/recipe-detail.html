@@ -1,60 +1,131 @@
 @if (recipe(); as recipe) {
-<div class="container mt-3">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <h2>{{ recipe.name }}</h2>
+<div class="container mt-3 mb-5">
+    <div class="d-flex justify-content-between align-items-start mb-4">
         <div>
-            <a class="btn btn-secondary me-2" routerLink="/recipes">Retour</a>
+            <h2 class="mb-2">{{ recipe.name }}</h2>
+            <div class="text-muted">
+                <p class="mb-2"><strong>Catégorie :</strong> {{ recipe.category }}</p>
+                <p class="mb-0"><strong>Parts :</strong> {{ recipe.servings }}</p>
+            </div>
+        </div>
+        <div class="d-flex gap-2">
+            <a class="btn btn-secondary" routerLink="/recipes">Retour</a>
+            <button class="btn btn-primary" (click)="edit()">Modifier</button>
             <button class="btn btn-danger" (click)="remove()">Supprimer</button>
         </div>
     </div>
 
-    <div class="mb-2"><strong>Parts:</strong> {{ recipe.servings }}</div>
-    <div class="mb-2"><strong>Kcal:</strong> {{ (totalNutrients()?.energyKcal || 0).toFixed(0) }}</div>
-    <div class="mb-2"><strong>Saison:</strong> {{ recipe.season }}</div>
-    <div class="mb-2"><strong>Végétarien:</strong> {{ recipe.vegetarian ? 'Oui' : 'Non' }}</div>
+    <div class="row mb-4">
+        <div class="col-12 col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h6 class="card-subtitle mb-2 text-muted">Saison</h6>
+                    <p class="card-text">{{ recipe.season || '—' }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h6 class="card-subtitle mb-2 text-muted">Végétarien</h6>
+                    <p class="card-text">{{ recipe.vegetarian ? 'Oui' : 'Non' }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
 
-    <h5>Ingrédients</h5>
-    <ul class="list-group mb-3">
-        @for (recipeFood of recipe.recipeFoods; track recipeFood.recipeId + recipeFood.measure.label) {
-            <li class="list-group-item">
-                {{ recipeFood.quantity }} {{ recipeFood.measure.label }} de {{ recipeFood.measure.foodId.name }}
-            </li>
-        }
-    </ul>
-
-    <h5>Valeurs nutritionnelles (pour 1 part)</h5>
-    @if (totalNutrients(); as nutrients) {
-        <table class="table">
-            <caption>Valeurs nutritionnelles pour 1 part</caption>
-            <thead>
-                <tr>
-                    <th scope="col">Kcal</th>
-                    <th scope="col">Protéines</th>
-                    <th scope="col">Lipides</th>
-                    <th scope="col">Glucides</th>
-                    <th scope="col">Sucres</th>
-                    <th scope="col">Fibres</th>
-                    <th scope="col">Sel</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>{{ nutrients.energyKcal.toFixed(0) }}</td>
-                    <td>{{ nutrients.proteins.toFixed(1) }}</td>
-                    <td>{{ nutrients.fats.toFixed(1) }}</td>
-                    <td>{{ nutrients.carbohydrates.toFixed(1) }}</td>
-                    <td>{{ nutrients.sugars.toFixed(1) }}</td>
-                    <td>{{ nutrients.fibers.toFixed(1) }}</td>
-                    <td>{{ nutrients.salt.toFixed(2) }}</td>
-                </tr>
-            </tbody>
-        </table>
-    } @else {
-        <p>Calcul en cours...</p>
+    @if (recipe.instructions) {
+        <div class="mb-4">
+            <h5>Instructions</h5>
+            <p class="pre-line">{{ recipe.instructions }}</p>
+        </div>
     }
 
-    <h5>Instructions</h5>
-    <p class="pre-line">{{ recipe.instructions || '—' }}</p>
+    <div class="mb-4">
+        <h5 class="mb-3">Ingrédients</h5>
+        @if (recipe.recipeFoods && recipe.recipeFoods.length > 0) {
+            <div class="list-group">
+                @for (recipeFood of recipe.recipeFoods; track recipeFood.id) {
+                    <div class="list-group-item">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <strong>{{ recipeFood.quantity }} {{ recipeFood.measure.label }}</strong>
+                                <span class="ms-2 text-muted">de {{ recipeFood.food.name }}</span>
+                            </div>
+                            <span class="badge bg-info">{{ (recipeFood.quantity * recipeFood.measure.grams).toFixed(0) }}g</span>
+                        </div>
+                    </div>
+                }
+            </div>
+        } @else {
+            <p class="text-muted">Aucun ingrédient.</p>
+        }
+    </div>
+
+    @if (recipe.recipeSubRecipes && recipe.recipeSubRecipes.length > 0) {
+        <div class="mb-4">
+            <h5 class="mb-3">Sous-recettes</h5>
+            <div class="list-group">
+                @for (subRecipe of recipe.recipeSubRecipes; track subRecipe.id) {
+                    <div class="list-group-item">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <strong>{{ subRecipe.quantity }}</strong>
+                                <span class="ms-2">de {{ subRecipe.childRecipe.name }}</span>
+                                <span class="ms-2"><a class="btn btn-sm btn-outline-primary" routerLink="/recipes/{{ subRecipe.childRecipe.id }}">Voir</a></span>
+                            </div>
+                            <div class="list-group">
+                                @for (recipeFood of subRecipe.childRecipe.recipeFoods; track recipeFood.id) {
+                                    <div class="list-group-item">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <strong>{{ recipeFood.quantity }} {{ recipeFood.measure.label }}</strong>
+                                                <span class="ms-2 text-muted">de {{ recipeFood.food.name }}</span>
+                                            </div>
+                                            <span class="badge bg-info">{{ (recipeFood.quantity * recipeFood.measure.grams).toFixed(0) }}g</span>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+
+    <div class="mb-4">
+        <h5 class="mb-3">Valeurs nutritionnelles (pour 1 part)</h5>
+        @if (totalNutrients(); as nutrients) {
+            <table class="table table-hover">
+                <caption>Valeurs nutritionnelles pour 1 part</caption>
+                <thead class="table-light">
+                    <tr>
+                        <th scope="col">Kcal</th>
+                        <th scope="col">Protéines (g)</th>
+                        <th scope="col">Lipides (g)</th>
+                        <th scope="col">Glucides (g)</th>
+                        <th scope="col">Sucres (g)</th>
+                        <th scope="col">Fibres (g)</th>
+                        <th scope="col">Sel (g)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>{{ nutrients.energyKcal.toFixed(0) }}</td>
+                        <td>{{ nutrients.proteins.toFixed(1) }}</td>
+                        <td>{{ nutrients.fats.toFixed(1) }}</td>
+                        <td>{{ nutrients.carbohydrates.toFixed(1) }}</td>
+                        <td>{{ nutrients.sugars.toFixed(1) }}</td>
+                        <td>{{ nutrients.fibers.toFixed(1) }}</td>
+                        <td>{{ nutrients.salt.toFixed(2) }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        } @else {
+            <p>Calcul en cours...</p>
+        }
+    </div>
 </div>
 } @else {
     <div class="container mt-3">

@@ -1,1 +1,50 @@
-/* Styles pour RecipeFormComponent */
+/* Pre-formatted text styling for multi-line content */
+.pre-line {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+/* Form improvements */
+fieldset {
+    legend {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: var(--bs-body-color);
+    }
+}
+
+/* Invalid feedback styling */
+.invalid-feedback {
+    font-size: 0.875rem;
+    color: var(--bs-danger);
+    margin-top: 0.25rem;
+}
+
+/* List group item improvements */
+.list-group-item {
+    border-color: var(--bs-border-color);
+    transition: background-color 0.15s ease-in-out;
+
+    &:hover {
+        background-color: rgba(0, 0, 0, 0.02);
+    }
+}
+
+/* Badge improvements */
+.badge {
+    font-weight: 500;
+    font-size: 0.85rem;
+}
+
+/* Table styling */
+table {
+    &.table-hover tbody tr:hover {
+        background-color: rgba(0, 0, 0, 0.02);
+    }
+}
+
+/* Card styling */
+.card {
+    border-color: var(--bs-border-color);
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+}

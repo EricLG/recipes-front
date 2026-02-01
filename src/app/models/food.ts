@@ -1,7 +1,7 @@
 import { FoodCategory } from './../enums/food.enum';
 
 export interface FoodDto {
-    id: string
+    id: string;
     name: string;
     category: FoodCategory;
     referenceUnit: string;
@@ -25,5 +25,10 @@ export interface MeasureDto {
     foodId: string;
     label: string;
     grams: number;
-    isDefault?: boolean;
+    isDefault: boolean;
+}
+
+// Extended Food DTO with embedded measures for CRUD operations
+export interface FoodWithMeasuresDto extends FoodDto {
+    measures: MeasureDto[];
 }
