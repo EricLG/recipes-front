@@ -1,5 +1,5 @@
 export enum RecipeSeason {
-  ALL_YEAR = 'all_year',
+  ALL_YEAR = 'all_year', // Default
   SPRING = 'spring',
   SUMMER = 'summer',
   AUTUMN = 'autumn',
@@ -10,7 +10,7 @@ export enum RecipeSeason {
 export enum RecipeCategory {
   BREAKFAST = 'breakfast',
   STARTER = 'starter',
-  MAIN = 'main',
+  MAIN = 'main', // Default
   SIDE = 'side',
   DESSERT = 'dessert',
   DRINK = 'drink',

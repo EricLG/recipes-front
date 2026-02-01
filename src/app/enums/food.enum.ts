@@ -1,3 +1,4 @@
+// No default option
 export enum FoodCategory {
   VEGETABLES = 'vegetables',
   FRUITS = 'fruits',
