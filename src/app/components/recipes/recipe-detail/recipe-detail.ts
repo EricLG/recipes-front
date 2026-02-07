@@ -49,27 +49,85 @@ export class RecipeDetail {
             salt: 0
         };
 
-        // Process recipe foods
-        recipe.recipeFoods.forEach(recipeFood => {
-            const quantity = recipeFood.quantity;
-            const grams = recipeFood.measure.grams;
-            const nutrients = recipeFood.food.nutrientsPer100;
+        // Compute totals for a recipe (including nested sub-recipes)
+        const computeTotalsForRecipe = (r: DetailedRecipeDTO, stack = new Set<string>()): NutrientsDto => {
+            if (!r) return {
+                energyKcal: 0,
+                proteins: 0,
+                fats: 0,
+                carbohydrates: 0,
+                sugars: 0,
+                fibers: 0,
+                salt: 0
+            };
 
-            const factor = (quantity * grams) / 100;
+            if (stack.has(r.id)) {
+                return {
+                    energyKcal: 0,
+                    proteins: 0,
+                    fats: 0,
+                    carbohydrates: 0,
+                    sugars: 0,
+                    fibers: 0,
+                    salt: 0
+                };
+            }
 
-            totals.energyKcal += nutrients.energyKcal * factor;
-            totals.proteins += nutrients.proteins * factor;
-            totals.fats += nutrients.fats * factor;
-            totals.carbohydrates += nutrients.carbohydrates * factor;
-            totals.sugars += nutrients.sugars * factor;
-            totals.fibers += nutrients.fibers * factor;
-            totals.salt += nutrients.salt * factor;
-        });
+            stack.add(r.id);
 
-        // TODO: Process recipe sub-recipes when backend is ready
-        // recipe.recipeSubRecipes?.forEach(subRecipe => {
-        //     // Get nutrients from sub-recipe and multiply by quantity
-        // });
+            const local: NutrientsDto = {
+                energyKcal: 0,
+                proteins: 0,
+                fats: 0,
+                carbohydrates: 0,
+                sugars: 0,
+                fibers: 0,
+                salt: 0
+            };
+
+            r.recipeFoods?.forEach(recipeFood => {
+                const factor = (recipeFood.quantity * recipeFood.measure.grams) / 100;
+                const n = recipeFood.food.nutrientsPer100;
+
+                local.energyKcal += n.energyKcal * factor;
+                local.proteins += n.proteins * factor;
+                local.fats += n.fats * factor;
+                local.carbohydrates += n.carbohydrates * factor;
+                local.sugars += n.sugars * factor;
+                local.fibers += n.fibers * factor;
+                local.salt += n.salt * factor;
+            });
+
+            r.recipeSubRecipes?.forEach(sub => {
+                const child = sub.childRecipe;
+                if (!child) return;
+                if (stack.has(child.id)) return;
+
+                const childTotals = computeTotalsForRecipe(child, stack);
+                const scale = child.servings ? (sub.quantity / child.servings) : sub.quantity;
+
+                local.energyKcal += childTotals.energyKcal * scale;
+                local.proteins += childTotals.proteins * scale;
+                local.fats += childTotals.fats * scale;
+                local.carbohydrates += childTotals.carbohydrates * scale;
+                local.sugars += childTotals.sugars * scale;
+                local.fibers += childTotals.fibers * scale;
+                local.salt += childTotals.salt * scale;
+            });
+
+            stack.delete(r.id);
+            return local;
+        };
+
+        const recipeTotals = computeTotalsForRecipe(recipe);
+
+        totals.energyKcal = recipeTotals.energyKcal;
+        totals.proteins = recipeTotals.proteins;
+        totals.fats = recipeTotals.fats;
+        totals.carbohydrates = recipeTotals.carbohydrates;
+        totals.sugars = recipeTotals.sugars;
+        totals.fibers = recipeTotals.fibers;
+        totals.salt = recipeTotals.salt;
 
         // Divide by servings to get nutrients per serving
         const servings = recipe.servings;

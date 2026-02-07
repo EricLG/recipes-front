@@ -123,7 +123,7 @@ export class RecipeForm {
                     recipeSubRecipes.forEach(sr => {
                         this.recipeSubRecipesArray.push(this.fb.group({
                             id: [sr.id],  // Include ID for update operations
-                            childRecipeId: [sr.childRecipeId, Validators.required],
+                            childRecipeId: [sr.childRecipe.id, Validators.required],
                             quantity: [sr.quantity, [Validators.required, Validators.min(0.1)]],
                         }));
                     });

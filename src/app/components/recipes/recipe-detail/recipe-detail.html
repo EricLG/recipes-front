@@ -51,6 +51,7 @@
                             <div>
                                 <strong>{{ recipeFood.quantity }} {{ recipeFood.measure.label }}</strong>
                                 <span class="ms-2 text-muted">de {{ recipeFood.food.name }}</span>
+                                <span class="ms-2"><a class="btn btn-sm btn-outline-primary" routerLink="/foods/{{ recipeFood.food.id }}" target="_blank">Voir</a></span>
                             </div>
                             <span class="badge bg-info">{{ (recipeFood.quantity * recipeFood.measure.grams).toFixed(0) }}g</span>
                         </div>
