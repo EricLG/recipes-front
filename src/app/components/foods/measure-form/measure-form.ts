@@ -14,6 +14,7 @@ import { MeasureService } from '../measure.service';
     styleUrl: './measure-form.scss',
 })
 export class MeasureForm implements OnInit {
+
     private fb = inject(FormBuilder);
     private measureSvc = inject(MeasureService);
     private activeModal = inject(NgbActiveModal);
@@ -84,4 +85,5 @@ export class MeasureForm implements OnInit {
         this.cancelEvent.emit();
         this.activeModal.dismiss('cancelled');
     }
+
 }

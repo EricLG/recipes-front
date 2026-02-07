@@ -17,6 +17,7 @@ import { RecipeService } from './../recipe.service';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class RecipeDetail {
+
     private route = inject(ActivatedRoute);
     private svc = inject(RecipeService);
     private router = inject(Router);
@@ -160,4 +161,5 @@ export class RecipeDetail {
             });
         }
     }
+
 }

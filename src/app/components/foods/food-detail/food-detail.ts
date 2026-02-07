@@ -52,4 +52,5 @@ export class FoodDetail {
 
         this.router.navigate(['/foods/edit', food.id]);
     }
+
 }

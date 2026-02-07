@@ -34,4 +34,5 @@ export class MeasureService {
     getAllMeasuresByFoodId(foodId: string): Observable<MeasureDto[]> {
         return this.http.get<MeasureDto[]>(`${API_BASE_URL}/measures/foods/${foodId}`);
     }
+
 }

@@ -25,4 +25,5 @@ export class Layout {
     constructor(
         public route: ActivatedRoute
     ) {}
+
 }
