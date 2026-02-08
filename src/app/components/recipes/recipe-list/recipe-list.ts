@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { Observable } from 'rxjs';
 
@@ -11,6 +11,7 @@ import { RecipeService } from './../recipe.service';
     imports: [CommonModule, RouterModule],
     templateUrl: './recipe-list.html',
     styleUrls: ['./recipe-list.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RecipeList {
 

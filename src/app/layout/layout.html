@@ -1,23 +1,70 @@
-<nav class="navbar navbar-expand navbar-dark bg-dark">
-    <div class="container-xl">
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark" style="background-color: #2d4620 !important;">
+    <div class="container-fluid">
+        <!-- Hamburger Menu -->
+        <button class="btn btn-link text-white d-lg-none me-2" (click)="toggleSidebar()" aria-label="Menu" aria-expanded="false">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 16 16">
+                <path fill-rule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z"/>
+            </svg>
+        </button>
+
         <a class="navbar-brand" routerLink="/">La taverne de May</a>
 
-        <div class="navbar-collapse collapse">
-            <ul ngbNav [activeId]="route.fragment | async" class="navbar-nav mr-auto">
+    </div>
+</nav>
+
+<!-- Main Layout Container -->
+<div class="layout-container">
+    <!-- Sidebar Navigation (Desktop) -->
+    <nav class="sidebar d-none d-lg-flex flex-column bg-light border-end">
+        <div class="nav-section p-3 d-flex align-items-center gap-3">
+            <img src="./assets/may_picto.png" alt="May logo" class="logo-img" />
+            <div class="flex-grow-1">
+                <a class="navbar-brand mb-0 d-block" routerLink="/">La taverne de May</a>
+            </div>
+        </div>
+
+        <div class="p-3">
+            <a class="btn btn-outline-success w-100 d-flex align-items-center justify-content-center mb-3" routerLink="/recipes/add">
+                <!-- Pencil icon -->
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil me-2" viewBox="0 0 16 16">
+                    <path d="M12.146.854a.5.5 0 0 1 .708 0l2.292 2.292a.5.5 0 0 1 0 .708l-9.193 9.193a.5.5 0 0 1-.168.11l-4 1.5a.5.5 0 0 1-.65-.65l1.5-4a.5.5 0 0 1 .11-.168L12.146.854zM11.207 2L3 10.207V13h2.793L14 4.793 11.207 2z"/>
+                </svg>
+                Créer une recette
+            </a>
+
+            <ul class="nav flex-column mt-2">
                 @for (link of links; track link) {
-                    <li [ngbNavItem]="link.path">
-                        <a ngbNavLink [routerLink]="link.path">{{ link.title }}</a>
+                    <li class="nav-item mb-2">
+                        <a class="nav-link" [routerLink]="link.path" routerLinkActive="active">{{ link.title }}</a>
                     </li>
                 }
             </ul>
         </div>
+    </nav>
 
-        <form class="form-inline my-2 my-md-0">
-            <input class="form-control" type="text" placeholder="Recherche" aria-label="Recherche">
-        </form>
+    <!-- Mobile Sidebar Offcanvas -->
+    <div class="offcanvas offcanvas-start" [class.show]="isSidebarOpen()" tabindex="-1" id="offcanvasSidebar">
+        @if (isSidebarOpen()) {
+            <div class="offcanvas-backdrop fade show" (click)="closeSidebar()"></div>
+        }
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title">Navigation</h5>
+            <button type="button" class="btn-close" (click)="closeSidebar()" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body p-0">
+            <ul class="nav flex-column">
+                @for (link of links; track link) {
+                    <li class="nav-item">
+                        <a class="nav-link" [routerLink]="link.path" routerLinkActive="active" (click)="closeSidebar()">{{ link.title }}</a>
+                    </li>
+                }
+            </ul>
+        </div>
     </div>
-</nav>
 
-<div class="container-xl mt-4">
-    <router-outlet />
+    <!-- Main Content Area -->
+    <div class="content-wrapper">
+        <router-outlet />
+    </div>
 </div>

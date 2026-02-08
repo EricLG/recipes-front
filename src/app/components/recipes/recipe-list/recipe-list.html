@@ -1,18 +1,74 @@
-<div class="container mt-3">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <h2>Recettes</h2>
-        <a class="btn btn-primary" routerLink="/recipes/add">Ajouter une recette</a>
+<div class="content-section">
+    <!-- Header and Action Bar -->
+    <div class="d-flex justify-content-center align-items-center mb-4">
+        <h2 class="mb-0">Recettes</h2>
     </div>
 
-    <div class="list-group">
-        @for (recipe of recipes$ | async; track $index) {
-            <a class="list-group-item list-group-item-action d-flex justify-content-between align-items-center" [routerLink]="['/recipes', recipe.id]">
-                <div>
-                    <div class="fw-bold">{{ recipe.name }}</div>
-                    <small class="text-muted">{{ recipe.servings }} parts</small>
-                </div>
-                <span class="badge bg-secondary">Détails</span>
-            </a>
+    <!-- Search and Filter Bar -->
+    <div class="search-filter-bar mb-4 p-3 bg-light rounded">
+        <input class="form-control mb-2" type="text" placeholder="Recherche" aria-label="Recherche des recettes">
+        <div class="select-row">
+            <select class="form-select" aria-label="Filtrer par categorie">
+                <option value="">Categorie</option>
+                <option>Entree</option>
+                <option>Plat principal</option>
+                <option>Dessert</option>
+            </select>
+            <select class="form-select" aria-label="Filtrer par saison">
+                <option value="">Saison</option>
+                <option>Printemps</option>
+                <option>Ete</option>
+                <option>Automne</option>
+                <option>Hiver</option>
+            </select>
+            <select class="form-select" aria-label="Filtrer par type">
+                <option value="">Tous les types</option>
+                <option>Vegetarien</option>
+                <option>Non vegetarien</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Recipe Cards Grid -->
+    <div class="recipes-grid">
+        @for (recipe of recipes$ | async; track recipe.id) {
+            <div class="recipe-card">
+                <a [routerLink]="['/recipes', recipe.id]" class="recipe-card-link">
+                    <div class="recipe-card-header p-2">
+                        <h6 class="mb-0">{{ recipe.name }}</h6>
+                    </div>
+
+                    <div class="recipe-card-image">
+                        @if (recipe.vegetarian) {
+                            <img src="assets/recipe_vege.png" alt="Plat végétarien" />
+                        } @else {
+                            <img src="assets/recipe_meat.png" alt="Plat non végétarien" />
+                        }
+                    </div>
+
+                    <div class="recipe-card-footer p-2 d-flex align-items-start">
+                        <div class="info-left">
+                            <div class="category">{{ recipe.category || 'Divers' }}</div>
+                            <div class="servings">{{ recipe.servings }} parts</div>
+                        </div>
+
+                        <div class="season-emojis ms-auto d-flex gap-1">
+                            <span class="emoji spring">✿</span>
+                            <span class="emoji summer">☼</span>
+                            <span class="emoji autumn">🍂</span>
+                            <span class="emoji winter">❄</span>
+                        </div>
+                    </div>
+
+                    <div class="veg-indicator text-center">
+                        @if (recipe.vegetarian) {
+                            <span class="veg-badge">V</span>
+                        } @else {
+                            <span class="veg-text">Non V</span>
+                        }
+                    </div>
+                </a>
+            </div>
         }
     </div>
 

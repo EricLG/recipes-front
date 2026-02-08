@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 
 import { Layout } from './layout/layout';
 
@@ -7,6 +7,7 @@ import { Layout } from './layout/layout';
     imports: [Layout],
     templateUrl: './app.html',
     styles: [],
+    changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class App {
 
