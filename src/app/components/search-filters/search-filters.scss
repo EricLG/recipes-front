@@ -1,0 +1,26 @@
+// Search and Filter Bar
+.search-filter-bar {
+    background-color: #ffffff !important;
+    width: 100%;
+}
+
+/* Align search above selects and center the whole filter block */
+.search-filter-bar {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.search-filter-bar .form-control {
+    max-width: 720px; /* width of 3 selects (235px each approx) */
+}
+
+.search-filter-bar .select-row {
+    display: flex;
+    gap: 0.75rem;
+    margin-top: 0.5rem;
+}
+
+.search-filter-bar .form-select {
+    width: 235px;
+}

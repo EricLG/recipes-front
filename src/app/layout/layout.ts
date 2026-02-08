@@ -3,6 +3,8 @@ import { ChangeDetectionStrategy, Component, signal } from "@angular/core";
 import { ActivatedRoute, RouterModule } from "@angular/router";
 import { NgbDropdownModule, NgbNavModule, NgbOffcanvasModule } from "@ng-bootstrap/ng-bootstrap";
 
+import { SearchFilters } from "../components/search-filters/search-filters";
+
 @Component({
     selector: 'layout',
     templateUrl: './layout.html',
@@ -14,6 +16,7 @@ import { NgbDropdownModule, NgbNavModule, NgbOffcanvasModule } from "@ng-bootstr
         NgbNavModule,
         NgbDropdownModule,
         NgbOffcanvasModule,
+        SearchFilters
     ]
 })
 export class Layout {

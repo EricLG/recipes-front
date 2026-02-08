@@ -1,5 +1,5 @@
 <!-- Navbar -->
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark" style="background-color: #2d4620 !important;">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark" style="background-color: var(--green) !important;">
     <div class="container-fluid">
         <!-- Hamburger Menu -->
         <button class="btn btn-link text-white d-lg-none me-2" (click)="toggleSidebar()" aria-label="Menu" aria-expanded="false">
@@ -8,7 +8,7 @@
             </svg>
         </button>
 
-        <a class="navbar-brand" routerLink="/">La taverne de May</a>
+        <a class="navbar-brand page-title" routerLink="/">La taverne de May</a>
 
     </div>
 </nav>
@@ -16,12 +16,9 @@
 <!-- Main Layout Container -->
 <div class="layout-container">
     <!-- Sidebar Navigation (Desktop) -->
-    <nav class="sidebar d-none d-lg-flex flex-column bg-light border-end">
-        <div class="nav-section p-3 d-flex align-items-center gap-3">
-            <img src="./assets/may_picto.png" alt="May logo" class="logo-img" />
-            <div class="flex-grow-1">
-                <a class="navbar-brand mb-0 d-block" routerLink="/">La taverne de May</a>
-            </div>
+    <nav class="sidebar d-none d-lg-flex flex-column">
+        <div class="d-flex align-items-center justify-content-center mt-3">
+            <img src="assets/may_picto.png" alt="May logo" class="logo-img"/>
         </div>
 
         <div class="p-3">
@@ -63,8 +60,11 @@
         </div>
     </div>
 
-    <!-- Main Content Area -->
-    <div class="content-wrapper">
-        <router-outlet />
-    </div>
+    <section class="d-flex flex-column flex-grow-1 align-items-center justify-content-center">
+        <app-search-filters></app-search-filters>
+
+        <div class="content-wrapper">
+            <router-outlet />
+        </div>
+    </section>
 </div>
