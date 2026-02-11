@@ -24,7 +24,7 @@ classDiagram
         string name
         string instructions
         boolean vegetarian
-        RecipeSeason season
+        RecipeSeason[] season
         RecipeCategory category
         number servings
     }

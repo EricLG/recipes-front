@@ -6,7 +6,7 @@ export interface RecipeDto {
     name: string;
     instructions: string;
     vegetarian: boolean;
-    season: RecipeSeason;
+    season: RecipeSeason[];
     category: RecipeCategory;
     servings: number;
 }
@@ -31,7 +31,7 @@ export interface DetailedRecipeDTO {
     name: string;
     instructions: string;
     vegetarian: boolean;
-    season: RecipeSeason;
+    season: RecipeSeason[];
     category: RecipeCategory;
     servings: number;
     recipeFoods: {

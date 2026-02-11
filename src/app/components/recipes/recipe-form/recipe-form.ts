@@ -83,7 +83,7 @@ export class RecipeForm {
         name: ['', Validators.required],
         instructions: [''],
         vegetarian: [false],
-        season: [RecipeSeason.ALL_YEAR],
+        season: [[RecipeSeason.ALL_YEAR], Validators.required],
         category: [RecipeCategory.MAIN],
         servings: [1, [Validators.required, Validators.min(1)]],
         recipeFoods: this.fb.array([]),
@@ -130,6 +130,24 @@ export class RecipeForm {
                 }
             }
         });
+    }
+
+    public isSeasonChecked(season: RecipeSeason): boolean {
+        const seasons = this.recipeForm.get('season')?.value || [];
+        return seasons.includes(season);
+    }
+
+    public toggleSeason(season: RecipeSeason): void {
+        const control = this.recipeForm.get('season');
+        if (!control) return;
+
+        const seasons = (control.value || []) as RecipeSeason[];
+        if (seasons.includes(season)) {
+            const updatedSeasons = seasons.filter(s => s !== season);
+            control.setValue(updatedSeasons);
+        } else {
+            control.setValue([...seasons, season]);
+        }
     }
 
     private createRecipeFoodFormGroup(): FormGroup {

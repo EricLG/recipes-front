@@ -4,7 +4,6 @@ export enum RecipeSeason {
     SUMMER = 'summer',
     AUTUMN = 'autumn',
     WINTER = 'winter',
-    OTHERS = 'others',
 }
 
 export enum RecipeCategory {

@@ -47,12 +47,28 @@
                 </div>
 
                 <div class="col-12 col-md-6 mb-3">
-                    <label for="season" class="form-label">Saison</label>
-                    <select id="season" class="form-select" formControlName="season">
+                    <label class="form-label">Saisons <span class="text-danger">*</span></label>
+                    <div class="d-flex gap-3 flex-wrap">
                         @for (season of seasons; track season) {
-                            <option [value]="season">{{ season }}</option>
+                            <div class="form-check">
+                                <input
+                                    type="checkbox"
+                                    class="form-check-input"
+                                    [id]="'season-' + season"
+                                    [checked]="isSeasonChecked(season)"
+                                    (change)="toggleSeason(season)"
+                                    aria-label="Saison {{ season }}">
+                                <label class="form-check-label" [for]="'season-' + season">
+                                    {{ season }}
+                                </label>
+                            </div>
                         }
-                    </select>
+                    </div>
+                    @if (recipeForm.get('season')?.invalid && recipeForm.get('season')?.touched) {
+                        <div class="invalid-feedback d-block">
+                            Sélectionner au moins une saison.
+                        </div>
+                    }
                 </div>
             </div>
 

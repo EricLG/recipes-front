@@ -28,10 +28,9 @@
                                 <div class="servings">{{ recipe.servings }} parts</div>
                             </div>
                             <div class="seasons-grid season-emojis">
-                                <span class="emoji spring">✿</span>
-                                <span class="emoji summer">☼</span>
-                                <span class="emoji autumn">🍂</span>
-                                <span class="emoji winter">❄</span>
+                                @for (season of getSeasonsToDisplay(recipe.season); track season) {
+                                    <span class="emoji" [class]="season.toLowerCase()">{{ getSeasonEmoji(season) }}</span>
+                                }
                             </div>
                         </div>
                     </div>
