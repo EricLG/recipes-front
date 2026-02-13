@@ -36,7 +36,7 @@
                     <label for="category" class="form-label">Catégorie <span class="text-danger">*</span></label>
                     <select id="category" class="form-select" formControlName="category" required aria-describedby="category-error">
                         @for (cat of categories; track cat) {
-                            <option [value]="cat">{{ cat }}</option>
+                            <option [value]="cat">{{ getCategoryLabel(cat) }}</option>
                         }
                     </select>
                     @if (recipeForm.get('category')?.invalid && recipeForm.get('category')?.touched) {
@@ -57,9 +57,9 @@
                                     [id]="'season-' + season"
                                     [checked]="isSeasonChecked(season)"
                                     (change)="toggleSeason(season)"
-                                    aria-label="Saison {{ season }}">
+                                    [aria-label]="'Saison ' + getSeasonLabel(season)">
                                 <label class="form-check-label" [for]="'season-' + season">
-                                    {{ season }}
+                                    {{ getSeasonLabel(season) }}
                                 </label>
                             </div>
                         }

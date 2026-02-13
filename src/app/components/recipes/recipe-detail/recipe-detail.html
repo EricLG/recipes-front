@@ -4,7 +4,7 @@
         <div>
             <h2 class="mb-2">{{ recipe.name }}</h2>
             <div class="text-muted">
-                <p class="mb-2"><strong>Catégorie :</strong> {{ recipe.category }}</p>
+                <p class="mb-2"><strong>Catégorie :</strong> {{ getCategoryLabel(recipe.category) }}</p>
                 <p class="mb-0"><strong>Parts :</strong> {{ recipe.servings }}</p>
             </div>
         </div>
@@ -22,7 +22,7 @@
                     <h6 class="card-subtitle mb-2 text-muted">Saisons</h6>
                     <div class="d-flex flex-wrap gap-2">
                         @for (season of recipe.season; track season) {
-                            <span class="badge bg-primary">{{ season }}</span>
+                            <span class="badge bg-primary">{{ getSeasonLabel(season) }}</span>
                         }
                     </div>
                 </div>

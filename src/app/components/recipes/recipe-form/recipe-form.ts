@@ -13,7 +13,7 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { of } from 'rxjs';
 import { filter, map, switchMap } from 'rxjs/operators';
 
-import { RecipeCategory, RecipeSeason } from '../../../enums/recipes.enum';
+import { RecipeCategory, RecipeSeason, seasonTranslations, recipeCategoryTranslations } from '../../../enums/recipes.enum';
 import { MeasureDto } from '../../../models/food';
 import { RecipeDto, RecipeWithRelationsDto } from '../../../models/recipe';
 import { FoodService } from '../../foods/food.service';
@@ -73,7 +73,7 @@ export class RecipeForm {
 
     // Enums
     public readonly seasons = Object.values(RecipeSeason);
-    public readonly categories = Object.values(RecipeCategory);
+    public readonly categories = Object.values(RecipeCategory)
 
     // Track forms visibility
     public readonly showNewRecipeFoodForm = signal(false);
@@ -148,6 +148,14 @@ export class RecipeForm {
         } else {
             control.setValue([...seasons, season]);
         }
+    }
+
+    public getSeasonLabel(season: string): string {
+        return seasonTranslations[season as RecipeSeason] || season;
+    }
+
+    public getCategoryLabel(category: string): string {
+        return recipeCategoryTranslations[category as RecipeCategory] || category;
     }
 
     private createRecipeFoodFormGroup(): FormGroup {

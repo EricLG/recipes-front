@@ -5,6 +5,7 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { of } from 'rxjs';
 import { filter, map, switchMap } from 'rxjs/operators';
 
+import { RecipeCategory, RecipeSeason, seasonTranslations, recipeCategoryTranslations } from './../../../enums/recipes.enum';
 import { NutrientsDto } from './../../../models/food';
 import { DetailedRecipeDTO } from './../../../models/recipe';
 import { RecipeService } from './../recipe.service';
@@ -160,6 +161,14 @@ export class RecipeDetail {
                 error: (err) => console.error('Erreur suppression:', err)
             });
         }
+    }
+
+    public getSeasonLabel(season: string): string {
+        return seasonTranslations[season as RecipeSeason] || season;
+    }
+
+    public getCategoryLabel(category: string): string {
+        return recipeCategoryTranslations[category as RecipeCategory] || category;
     }
 
 }

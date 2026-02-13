@@ -20,7 +20,7 @@
 
                         <div class="d-flex justify-content-between">
                             <div class="info-left">
-                                <div class="category">{{ (recipe.category | titlecase) || 'Divers' }}
+                                <div class="category">{{ getCategoryLabel(recipe.category) }}
                                     @if (recipe.vegetarian) {
                                         <span class="m-1 badge rounded-pill bg-green-light">V</span>
                                     }
