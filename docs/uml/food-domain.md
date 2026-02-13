@@ -18,7 +18,7 @@ classDiagram
     class Food {
         ObjectId _id
         string name
-        string category
+        FoodCategory category
         string referenceUnit
         number density
         Nutrients nutrientsPer100

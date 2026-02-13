@@ -20,7 +20,7 @@
                 <label for="category" class="form-label">Catégorie <span class="text-danger">*</span></label>
                 <select id="category" class="form-select" formControlName="category" required aria-describedby="category-error">
                     @for (cat of categories; track cat) {
-                        <option [value]="cat">{{ cat }}</option>
+                        <option [value]="cat">{{ getCategoryLabel(cat) }}</option>
                     }
                 </select>
                 @if (foodForm.get('category')?.invalid && foodForm.get('category')?.touched) {

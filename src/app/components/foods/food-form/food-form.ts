@@ -13,7 +13,7 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { of } from 'rxjs';
 import { filter, map, switchMap } from 'rxjs/operators';
 
-import { FoodCategory } from '../../../enums/food.enum';
+import { categoryTranslations, FoodCategory } from '../../../enums/food.enum';
 import { FoodDto, MeasureDto } from '../../../models/food';
 import { FoodService } from '../food.service';
 
@@ -35,31 +35,24 @@ export class FoodForm {
     private router = inject(Router);
     private svcFood = inject(FoodService);
 
-    // Get food ID from route parameters
     private readonly id$ = this.route.paramMap.pipe(
         map(p => p.get('id')),
         filter((id): id is string => id !== null)
     );
     public readonly id = toSignal(this.id$, { initialValue: null });
 
-    // Fetch food with measures data if editing
     private readonly foodWithMeasures$ = this.id$.pipe(
         switchMap(id => id ? this.svcFood.getByIdWithMeasures(id) : of(null))
     );
     public readonly foodWithMeasures = toSignal(this.foodWithMeasures$, { initialValue: null });
 
-    // Dynamic title
     public readonly title = computed(() => this.id() ? 'Modifier un ingrédient' : 'Ajouter un ingrédient');
-
-    // Enums
-    public readonly categories = Object.values(FoodCategory);
-
-    // Track new measure being added
+    public readonly categories = Object.values(FoodCategory).sort((a, b) => categoryTranslations[a].localeCompare(categoryTranslations[b], 'fr'));
     public readonly showNewMeasureForm = signal(false);
 
     public readonly foodForm = this.fb.group({
         name: ['', Validators.required],
-        category: [FoodCategory.OTHERS, Validators.required],
+        category: [FoodCategory.OTHER, Validators.required],
         referenceUnit: ['', Validators.required],
         density: [0, [Validators.required, Validators.min(0)]],
         needReview: [false],
@@ -112,6 +105,10 @@ export class FoodForm {
 
     public removeMeasure(index: number): void {
         this.measuresArray.removeAt(index);
+    }
+
+    public getCategoryLabel(category: string): string {
+        return categoryTranslations[category as FoodCategory] || category;
     }
 
     public onSubmit(): void {

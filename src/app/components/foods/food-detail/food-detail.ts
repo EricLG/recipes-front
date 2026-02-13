@@ -4,6 +4,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { distinctUntilChanged, filter, map, shareReplay, switchMap } from 'rxjs';
 
+import { categoryTranslations, FoodCategory } from './../../../enums/food.enum';
 import { FoodWithMeasuresDto } from './../../../models/food';
 import { FoodService } from './../food.service';
 
@@ -51,6 +52,10 @@ export class FoodDetail {
         if (!food) return;
 
         this.router.navigate(['/foods/edit', food.id]);
+    }
+
+    public getCategoryLabel(category: string): string {
+        return categoryTranslations[category as FoodCategory] || category;
     }
 
 }
