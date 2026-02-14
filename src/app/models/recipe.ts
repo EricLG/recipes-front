@@ -61,3 +61,12 @@ export interface RecipeWithRelationsDto extends RecipeDto {
     recipeFoods: (Omit<RecipeFoodDto, 'id'>)[];
     recipeSubRecipes: (Omit<RecipeSubRecipeDto, 'id'>)[];
 }
+
+export interface RecipeFilterDto {
+
+    name?: string
+    category?: RecipeCategory
+    seasons?: RecipeSeason[]
+    vegetarian?: boolean
+
+}

@@ -1,23 +1,26 @@
 <div class="search-filter-bar mb-4 p-3">
-    <input class="form-control mb-2" type="text" placeholder="Recherche" aria-label="Recherche des recettes">
-    <div class="select-row">
-        <select class="form-select" aria-label="Filtrer par categorie">
-            <option value="">Categorie</option>
-            <option>Entree</option>
-            <option>Plat principal</option>
-            <option>Dessert</option>
-        </select>
-        <select class="form-select" aria-label="Filtrer par saison">
-            <option value="">Saison</option>
-            <option>Printemps</option>
-            <option>Ete</option>
-            <option>Automne</option>
-            <option>Hiver</option>
-        </select>
-        <select class="form-select" aria-label="Filtrer par type">
-            <option value="">Tous les types</option>
-            <option>Vegetarien</option>
-            <option>Non vegetarien</option>
-        </select>
-    </div>
+    <form [formGroup]="filterForm">
+        <input class="form-control mb-2" type="text" placeholder="Recherche" aria-label="Recherche des recettes" formControlName="name" maxlength="40">
+        <div class="select-row">
+            <select class="form-select" aria-label="Filtrer par catégorie" formControlName="category">
+                <option value="">Catégorie</option>
+                @for (category of categories; track category[0]) {
+                    <option [value]="category[0]">{{ category[1] }}</option>
+                }
+            </select>
+            <select class="form-select" aria-label="Filtrer par saison" formControlName="season">
+                <option value="">Saison</option>
+                @for (season of seasons; track season[0]) {
+                    <option [value]="season[0]">{{ season[1] }}</option>
+                }
+            </select>
+            <select class="form-select" aria-label="Filtrer par type" formControlName="vegetarian">
+                <option value="">Tous les types</option>
+                @for (option of vegetarianOptions; track option.value) {
+                    <option [value]="option.value">{{ option.label }}</option>
+                }
+            </select>
+        </div>
+        <button type="button" class="btn btn-primary mt-2" (click)="onSearch()">Rechercher</button>
+    </form>
 </div>

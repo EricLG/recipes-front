@@ -1,8 +1,10 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { Observable } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
 
+import { RecipeFilterService } from '../recipe-filter.service';
 import { RecipeSeason, RecipeCategory, seasonTranslations, recipeCategoryTranslations } from './../../../enums/recipes.enum';
 import { RecipeDto } from './../../../models/recipe';
 import { RecipeService } from './../recipe.service';
@@ -16,7 +18,7 @@ import { RecipeService } from './../recipe.service';
 })
 export class RecipeList {
 
-    public recipes$!: Observable<RecipeDto[]>
+    public recipes$!: Observable<RecipeDto[]>;
 
     private readonly seasonEmojiMap: Record<RecipeSeason, string> = {
         [RecipeSeason.SPRING]: '✿',
@@ -33,8 +35,13 @@ export class RecipeList {
         RecipeSeason.WINTER,
     ];
 
-    constructor(private svc: RecipeService) {
-        this.recipes$ = this.svc.getAll();
+    private readonly recipeService = inject(RecipeService);
+    private readonly filterService = inject(RecipeFilterService);
+
+    constructor() {
+        this.recipes$ = this.filterService.filter$.pipe(
+            switchMap((filter) => this.recipeService.search(filter))
+        );
     }
 
     public getSeasonEmoji(season: RecipeSeason): string {

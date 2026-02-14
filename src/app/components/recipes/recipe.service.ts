@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
-import { RecipeDto, DetailedRecipeDTO, RecipeWithRelationsDto } from './../../models/recipe';
+import { RecipeDto, DetailedRecipeDTO, RecipeWithRelationsDto, RecipeFilterDto } from './../../models/recipe';
 
 const API_BASE_URL = '/api';
 
@@ -41,6 +41,10 @@ export class RecipeService {
 
     getDetailRecipe(id: string): Observable<DetailedRecipeDTO> {
         return this.http.get<DetailedRecipeDTO>(`${API_BASE_URL}/recipes/${id}/detail`);
+    }
+
+    search(query: RecipeFilterDto): Observable<RecipeDto[]> {
+        return this.http.post<RecipeDto[]>(`${API_BASE_URL}/recipes/search`, query);
     }
 
 }

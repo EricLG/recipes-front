@@ -33,7 +33,11 @@
             <ul class="nav flex-column mt-2">
                 @for (link of links; track link) {
                     <li class="nav-item mb-2">
-                        <a class="nav-link" [routerLink]="link.path" routerLinkActive="active">{{ link.title }}</a>
+                        @if (link.path === 'recipes') {
+                            <a class="nav-link" (click)="goToAllRecipes()" style="cursor: pointer;">{{ link.title }}</a>
+                        } @else {
+                            <a class="nav-link" [routerLink]="link.path" routerLinkActive="active">{{ link.title }}</a>
+                        }
                     </li>
                 }
             </ul>
@@ -53,7 +57,11 @@
             <ul class="nav flex-column">
                 @for (link of links; track link) {
                     <li class="nav-item">
-                        <a class="nav-link" [routerLink]="link.path" routerLinkActive="active" (click)="closeSidebar()">{{ link.title }}</a>
+                        @if (link.path === 'recipes') {
+                            <a class="nav-link" (click)="goToAllRecipes(); closeSidebar()" style="cursor: pointer;">{{ link.title }}</a>
+                        } @else {
+                            <a class="nav-link" [routerLink]="link.path" routerLinkActive="active" (click)="closeSidebar()">{{ link.title }}</a>
+                        }
                     </li>
                 }
             </ul>

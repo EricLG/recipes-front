@@ -1,9 +1,10 @@
 import { CommonModule } from "@angular/common";
-import { ChangeDetectionStrategy, Component, signal } from "@angular/core";
-import { ActivatedRoute, RouterModule } from "@angular/router";
+import { ChangeDetectionStrategy, Component, inject, signal } from "@angular/core";
+import { ActivatedRoute, Router, RouterModule } from "@angular/router";
 import { NgbDropdownModule, NgbNavModule, NgbOffcanvasModule } from "@ng-bootstrap/ng-bootstrap";
 
 import { SearchFilters } from "../components/search-filters/search-filters";
+import { RecipeFilterService } from "../components/recipes/recipe-filter.service";
 
 @Component({
     selector: 'layout',
@@ -27,6 +28,14 @@ export class Layout {
     ];
 
     public isSidebarOpen = signal(false);
+
+    private readonly filterService = inject(RecipeFilterService);
+    private readonly router = inject(Router);
+
+    public goToAllRecipes(): void {
+        this.filterService.resetFilter();
+        this.router.navigate(['/recipes']);
+    }
 
     constructor(
         public route: ActivatedRoute
