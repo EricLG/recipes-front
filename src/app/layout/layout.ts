@@ -3,8 +3,8 @@ import { ChangeDetectionStrategy, Component, inject, signal } from "@angular/cor
 import { ActivatedRoute, Router, RouterModule } from "@angular/router";
 import { NgbDropdownModule, NgbNavModule, NgbOffcanvasModule } from "@ng-bootstrap/ng-bootstrap";
 
-import { SearchFilters } from "../components/search-filters/search-filters";
 import { RecipeFilterService } from "../components/recipes/recipe-filter.service";
+import { SearchFilters } from "../components/search-filters/search-filters";
 
 @Component({
     selector: 'layout',
@@ -24,7 +24,8 @@ export class Layout {
 
     public links = [
         { title: 'Recettes', path: 'recipes' },
-        { title: 'Ingrédients', path: 'foods' }
+        { title: 'Ingrédients', path: 'foods' },
+        { title: 'Menu', path: 'coming-soon' }
     ];
 
     public isSidebarOpen = signal(false);
