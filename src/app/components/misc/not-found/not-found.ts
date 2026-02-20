@@ -1,4 +1,5 @@
 import { Component } from "@angular/core";
+import { RouterModule } from "@angular/router";
 
 @Component({
     selector: 'not-found',
@@ -15,7 +16,7 @@ import { Component } from "@angular/core";
         .not-found h2 { font-size: 1.5rem; margin-bottom: 0.5rem; }
         .not-found a { color: #1976d2; text-decoration: none; }
     `,
-    imports: []
+    imports: [RouterModule]
 })
 export class NotFound { }
 // TODO : add a more relevant image for 404 page

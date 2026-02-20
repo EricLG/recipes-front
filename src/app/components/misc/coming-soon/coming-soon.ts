@@ -1,4 +1,5 @@
 import { Component } from "@angular/core";
+import { RouterModule } from "@angular/router";
 
 @Component({
     selector: 'coming-soon',
@@ -15,6 +16,6 @@ import { Component } from "@angular/core";
         .coming-soon h2 { font-size: 1.5rem; margin-bottom: 0.5rem; }
         .coming-soon a { color: #1976d2; text-decoration: none; }
     `,
-    imports: []
+    imports: [RouterModule]
 })
 export class ComingSoon { }
