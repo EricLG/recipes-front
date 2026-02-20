@@ -20,14 +20,6 @@ export class RecipeList {
 
     public recipes$!: Observable<RecipeDto[]>;
 
-    private readonly seasonEmojiMap: Record<RecipeSeason, string> = {
-        [RecipeSeason.SPRING]: '✿',
-        [RecipeSeason.SUMMER]: '☼',
-        [RecipeSeason.AUTUMN]: '🍂',
-        [RecipeSeason.WINTER]: '❄',
-        [RecipeSeason.ALL_YEAR]: '🌍',
-    };
-
     private readonly allSeasons: RecipeSeason[] = [
         RecipeSeason.SPRING,
         RecipeSeason.SUMMER,
@@ -44,9 +36,6 @@ export class RecipeList {
         );
     }
 
-    public getSeasonEmoji(season: RecipeSeason): string {
-        return this.seasonEmojiMap[season] || '?';
-    }
 
     public getSeasonsToDisplay(seasons: RecipeSeason[]): RecipeSeason[] {
         return seasons.includes(RecipeSeason.ALL_YEAR) ? this.allSeasons : seasons;
@@ -58,6 +47,12 @@ export class RecipeList {
 
     public getCategoryLabel(category: string): string {
         return recipeCategoryTranslations[category as RecipeCategory] || category;
+    }
+
+    public servingMapping: {[k: string]: string} = {
+        '=0': 'Aucune part.',
+        '=1': '1 part.',
+        'other': '# parts.'
     }
 
 }

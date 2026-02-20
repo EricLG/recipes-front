@@ -5,31 +5,34 @@
     <!-- Recipe Cards Grid -->
     <div class="recipes-grid">
         @for (recipe of recipes$ | async; track recipe.id) {
-            <div class="card">
+            <div class="card tile">
                 <a [routerLink]="['/recipes', recipe.id]" class="recipe-card-link">
                     <div class="card-body">
-                        <h5 class="card-title text-center">{{ recipe.name | titlecase }}</h5>
+                        <p class="card-title text-center font-lydian">{{ recipe.name | titlecase }}</p>
 
-                        <div class="d-flex justify-content-center mb-3">
+                        <div class="d-flex justify-content-center">
                             @if (recipe.vegetarian) {
-                                <img src="assets/recipe_vege.png" alt="Plat végétarien" width="120"/>
+                                <img src="assets/recipe_vege.png" alt="Plat végétarien" width="110" height="90"/>
                             } @else {
-                                <img src="assets/recipe_meat.png" alt="Plat non végétarien" width="120"/>
+                                <img src="assets/recipe_meat.png" alt="Plat non végétarien" width="110" height="90"/>
                             }
                         </div>
 
                         <div class="d-flex justify-content-between">
-                            <div class="info-left">
-                                <div class="category">{{ getCategoryLabel(recipe.category) }}
-                                    @if (recipe.vegetarian) {
-                                        <span class="m-1 badge rounded-pill bg-green-light">V</span>
-                                    }
+                            <div class="info-left d-flex gap-1">
+                                <div class="d-flex flex-column">
+                                    <div class="category">{{ getCategoryLabel(recipe.category) }}</div>
+                                    <div class="servings">{{ recipe.servings | i18nPlural: servingMapping }}</div>
                                 </div>
-                                <div class="servings">{{ recipe.servings }} parts</div>
+                                @if (recipe.vegetarian) {
+                                    <div>
+                                        <img width="25" height="22" src="assets/pictos/vege.png" alt="natural-food">
+                                    </div>
+                                }
                             </div>
-                            <div class="seasons-grid season-emojis">
+                            <div class="seasons-grid">
                                 @for (season of getSeasonsToDisplay(recipe.season); track season) {
-                                    <span class="emoji" [class]="season.toLowerCase()">{{ getSeasonEmoji(season) }}</span>
+                                    <img src="assets/pictos/{{ season.toLowerCase() }}.png" [alt]="season" [title]="getSeasonLabel(season)" [width]="27" [height]="22"/>
                                 }
                             </div>
                         </div>
