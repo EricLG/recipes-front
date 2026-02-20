@@ -1,5 +1,5 @@
 <!-- Navbar -->
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark" style="background-color: var(--green) !important;">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top" style="background-color: var(--green) !important;">
     <div class="container-fluid">
         <!-- Hamburger Menu -->
         <button class="btn btn-link text-white d-lg-none me-2" (click)="toggleSidebar()" aria-label="Menu" aria-expanded="false">
@@ -68,7 +68,7 @@
         </div>
     </div>
 
-    <section class="d-flex flex-column flex-grow-1 align-items-center justify-content-center">
+    <section class="d-flex flex-column flex-grow-1 align-items-center justify-content-start">
         <app-search-filters></app-search-filters>
 
         <div class="content-wrapper">
