@@ -3,7 +3,7 @@ import { Component, inject } from "@angular/core";
 import { ReactiveFormsModule, FormBuilder, FormGroup } from "@angular/forms";
 import { Router } from "@angular/router";
 
-import { RecipeCategory, RecipeSeason, recipeCategoryTranslations, seasonTranslations } from "../../enums/recipes.enum";
+import { RecipeCategory, RecipeSeason, RecipeVegetarianStatus, recipeCategoryTranslations, seasonTranslations, recipeVegetarianStatusTranslations } from "../../enums/recipes.enum";
 import { RecipeFilterDto } from "../../models/recipe";
 import { RecipeFilterService } from "../recipes/recipe-filter.service";
 
@@ -17,10 +17,7 @@ export class SearchFilters {
 
     protected categories = Object.entries(recipeCategoryTranslations);
     protected seasons = Object.entries(seasonTranslations);
-    protected vegetarianOptions = [
-        { label: 'Végétarien', value: 'true' },
-        { label: 'Non végétarien', value: 'false' }
-    ];
+    protected vegetarianStatusOptions = Object.entries(recipeVegetarianStatusTranslations);
 
     protected filterForm: FormGroup;
 
@@ -60,8 +57,8 @@ export class SearchFilters {
             filter.seasons = [formValue.season as RecipeSeason];
         }
 
-        if (formValue.vegetarian) {
-            filter.vegetarian = formValue.vegetarian === 'true';
+        if (formValue.vegetarianStatus) {
+            filter.vegetarianStatus = formValue.vegetarianStatus as RecipeVegetarianStatus;
         }
 
         return filter;

@@ -5,7 +5,7 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { of } from 'rxjs';
 import { filter, map, switchMap } from 'rxjs/operators';
 
-import { RecipeCategory, RecipeSeason, seasonTranslations, recipeCategoryTranslations } from './../../../enums/recipes.enum';
+import { RecipeCategory, RecipeSeason, seasonTranslations, recipeCategoryTranslations, recipeVegetarianStatusTranslations, RecipeVegetarianStatus } from './../../../enums/recipes.enum';
 import { NutrientsDto } from './../../../models/food';
 import { DetailedRecipeDTO } from './../../../models/recipe';
 import { RecipeService } from './../recipe.service';
@@ -169,6 +169,10 @@ export class RecipeDetail {
 
     public getCategoryLabel(category: string): string {
         return recipeCategoryTranslations[category as RecipeCategory] || category;
+    }
+
+    public getVegetarianStatusLabel(status: string): string {
+        return recipeVegetarianStatusTranslations[status as RecipeVegetarianStatus] || status;
     }
 
 }

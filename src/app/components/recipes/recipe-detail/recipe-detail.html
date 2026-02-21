@@ -32,7 +32,7 @@
             <div class="card">
                 <div class="card-body">
                     <h6 class="card-subtitle mb-2 text-muted">Végétarien</h6>
-                    <p class="card-text">{{ recipe.vegetarian ? 'Oui' : 'Non' }}</p>
+                    <p class="card-text">{{ getVegetarianStatusLabel(recipe.vegetarianStatus) }}</p>
                 </div>
             </div>
         </div>

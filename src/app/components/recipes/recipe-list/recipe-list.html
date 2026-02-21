@@ -11,10 +11,12 @@
                         <p class="card-title text-center font-lydian">{{ recipe.name | titlecase }}</p>
 
                         <div class="d-flex justify-content-center">
-                            @if (recipe.vegetarian) {
+                            @if (recipe.vegetarianStatus === 'vegetarian') {
                                 <img src="assets/recipe_vege.png" alt="Plat végétarien" width="110" height="90"/>
-                            } @else {
+                            } @else if ( recipe.vegetarianStatus === 'non_vegetarian') {
                                 <img src="assets/recipe_meat.png" alt="Plat non végétarien" width="110" height="90"/>
+                            } @else if ( recipe.vegetarianStatus === 'flexible') {
+                                <img src="assets/recipe_flexible.png" alt="Plat flexible" width="110" height="90"/>
                             }
                         </div>
 
@@ -24,9 +26,9 @@
                                     <div class="category">{{ getCategoryLabel(recipe.category) }}</div>
                                     <div class="servings">{{ recipe.servings | i18nPlural: servingMapping }}</div>
                                 </div>
-                                @if (recipe.vegetarian) {
+                                @if (recipe.vegetarianStatus === 'vegetarian') {
                                     <div>
-                                        <img width="25" height="22" src="assets/pictos/vege.png" alt="natural-food">
+                                        <img width="25" height="16" src="assets/pictos/vege.png" alt="natural-food">
                                     </div>
                                 }
                             </div>

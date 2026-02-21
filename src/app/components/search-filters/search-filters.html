@@ -16,8 +16,8 @@
             </select>
             <select class="form-select" aria-label="Filtrer par type" formControlName="vegetarian">
                 <option value="">Tous les types</option>
-                @for (option of vegetarianOptions; track option.value) {
-                    <option [value]="option.value">{{ option.label }}</option>
+                @for (option of vegetarianStatusOptions; track option[0]) {
+                    <option [value]="option[0]">{{ option[1] }}</option>
                 }
             </select>
         </div>

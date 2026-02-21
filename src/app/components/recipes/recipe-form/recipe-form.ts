@@ -13,7 +13,7 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { of } from 'rxjs';
 import { filter, map, switchMap } from 'rxjs/operators';
 
-import { RecipeCategory, RecipeSeason, seasonTranslations, recipeCategoryTranslations } from '../../../enums/recipes.enum';
+import { RecipeCategory, RecipeSeason, seasonTranslations, recipeCategoryTranslations, RecipeVegetarianStatus, recipeVegetarianStatusTranslations } from '../../../enums/recipes.enum';
 import { MeasureDto } from '../../../models/food';
 import { RecipeDto, RecipeWithRelationsDto } from '../../../models/recipe';
 import { FoodService } from '../../foods/food.service';
@@ -74,6 +74,7 @@ export class RecipeForm {
     // Enums
     public readonly seasons = Object.values(RecipeSeason);
     public readonly categories = Object.values(RecipeCategory)
+    public readonly vegetarianStatuses = Object.values(RecipeVegetarianStatus);
 
     // Track forms visibility
     public readonly showNewRecipeFoodForm = signal(false);
@@ -82,7 +83,7 @@ export class RecipeForm {
     public readonly recipeForm = this.fb.group({
         name: ['', Validators.required],
         instructions: [''],
-        vegetarian: [false],
+        vegetarianStatus: RecipeVegetarianStatus.NON_VEGETARIAN,
         season: [[RecipeSeason.ALL_YEAR], Validators.required],
         category: [RecipeCategory.MAIN],
         servings: [1, [Validators.required, Validators.min(1)]],
@@ -158,6 +159,10 @@ export class RecipeForm {
         return recipeCategoryTranslations[category as RecipeCategory] || category;
     }
 
+    public getVegetarianStatusLabel(status: string): string {
+        return recipeVegetarianStatusTranslations[status as RecipeVegetarianStatus] || status;
+    }
+
     private createRecipeFoodFormGroup(): FormGroup {
         return this.fb.group({
             id: [null],  // New items have no id; will be auto-assigned by backend
@@ -204,7 +209,7 @@ export class RecipeForm {
         const recipeData = {
             name: data.name,
             instructions: data.instructions,
-            vegetarian: data.vegetarian,
+            vegetarianStatus: data.vegetarianStatus,
             season: data.season,
             category: data.category,
             servings: data.servings,

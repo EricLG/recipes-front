@@ -72,9 +72,18 @@
                 </div>
             </div>
 
-            <div class="form-check mb-3">
-                <input id="vegetarian" type="checkbox" class="form-check-input" formControlName="vegetarian">
-                <label for="vegetarian" class="form-check-label">Végétarien</label>
+            <div class="col-12 col-md-6 mb-3">
+                <label for="vegetarianStatus" class="form-label">Statut végétarien <span class="text-danger">*</span></label>
+                <select id="vegetarianStatus" class="form-select" formControlName="vegetarianStatus" required aria-describedby="vegetarianStatus-error">
+                    @for (status of vegetarianStatuses; track status) {
+                        <option [value]="status">{{ getVegetarianStatusLabel(status) }}</option>
+                    }
+                </select>
+                @if (recipeForm.get('vegetarianStatus')?.invalid && recipeForm.get('vegetarianStatus')?.touched) {
+                    <div id="vegetarianStatus-error" class="invalid-feedback d-block">
+                        Le statut végétarien est requis.
+                    </div>
+                }
             </div>
         </fieldset>
 
