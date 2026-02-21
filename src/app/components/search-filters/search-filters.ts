@@ -1,7 +1,8 @@
 import { CommonModule } from "@angular/common";
-import { Component, inject } from "@angular/core";
+import { Component, inject, OnDestroy } from "@angular/core";
 import { ReactiveFormsModule, FormBuilder, FormGroup } from "@angular/forms";
 import { Router } from "@angular/router";
+import { debounceTime, Subscription } from "rxjs";
 
 import { RecipeCategory, RecipeSeason, RecipeVegetarianStatus, recipeCategoryTranslations, seasonTranslations, recipeVegetarianStatusTranslations } from "../../enums/recipes.enum";
 import { RecipeFilterDto } from "../../models/recipe";
@@ -13,7 +14,7 @@ import { RecipeFilterService } from "../recipes/recipe-filter.service";
     styleUrls: ['./search-filters.scss'],
     imports: [CommonModule, ReactiveFormsModule]
 })
-export class SearchFilters {
+export class SearchFilters implements OnDestroy {
 
     protected categories = Object.entries(recipeCategoryTranslations);
     protected seasons = Object.entries(seasonTranslations);
@@ -24,13 +25,41 @@ export class SearchFilters {
     private readonly router = inject(Router);
     private readonly fb = inject(FormBuilder);
     private readonly filterService = inject(RecipeFilterService);
+    private readonly filterFormValueChanges$: Subscription
+    private readonly filterSvc$: Subscription
 
     constructor() {
         this.filterForm = this.fb.group({
             name: [''],
             category: [''],
             season: [''],
-            vegetarian: ['']
+            vegetarianStatus: ['']
+        });
+        this.filterFormValueChanges$ =this.filterForm.valueChanges.pipe(
+            debounceTime(500)
+        ).subscribe(() => this.onSearch());
+
+        this.filterSvc$ = this.filterService.filter$.subscribe(filter => {
+            this.filterForm.patchValue({
+                name: filter.name || '',
+                category: filter.category || '',
+                season: filter.seasons ? filter.seasons[0] : '',
+                vegetarianStatus: filter.vegetarianStatus || ''
+            }, { emitEvent: false });
+        });
+    }
+
+    ngOnDestroy(): void {
+        this.filterFormValueChanges$.unsubscribe();
+        this.filterSvc$.unsubscribe();
+    }
+
+    protected resetFilters(): void {
+        this.filterForm.reset({
+            name: '',
+            category: '',
+            season: '',
+            vegetarianStatus: ''
         });
     }
 

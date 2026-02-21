@@ -34,6 +34,7 @@ export class Layout {
     private readonly router = inject(Router);
 
     public goToAllRecipes(): void {
+        console.log('goToAllRecipes');
         this.filterService.resetFilter();
         this.router.navigate(['/recipes']);
     }

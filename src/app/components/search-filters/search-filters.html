@@ -14,13 +14,13 @@
                     <option [value]="season[0]">{{ season[1] }}</option>
                 }
             </select>
-            <select class="form-select" aria-label="Filtrer par type" formControlName="vegetarian">
+            <select class="form-select" aria-label="Filtrer par type" formControlName="vegetarianStatus">
                 <option value="">Tous les types</option>
                 @for (option of vegetarianStatusOptions; track option[0]) {
                     <option [value]="option[0]">{{ option[1] }}</option>
                 }
             </select>
         </div>
-        <button type="button" class="btn btn-primary mt-2" (click)="onSearch()">Rechercher</button>
+        <button type="button" class="btn btn-primary mt-2" (click)="resetFilters()">Reset</button>
     </form>
 </div>
