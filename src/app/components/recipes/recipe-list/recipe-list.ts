@@ -36,11 +36,6 @@ export class RecipeList {
         );
     }
 
-
-    public getSeasonsToDisplay(seasons: RecipeSeason[]): RecipeSeason[] {
-        return seasons.includes(RecipeSeason.ALL_YEAR) ? this.allSeasons : seasons;
-    }
-
     public getSeasonLabel(season: string): string {
         return seasonTranslations[season as RecipeSeason] || season;
     }

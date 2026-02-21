@@ -84,7 +84,7 @@ export class RecipeForm {
         name: ['', Validators.required],
         instructions: [''],
         vegetarianStatus: RecipeVegetarianStatus.NON_VEGETARIAN,
-        season: [[RecipeSeason.ALL_YEAR], Validators.required],
+        season: [[] as RecipeSeason[]],
         category: [RecipeCategory.MAIN],
         servings: [1, [Validators.required, Validators.min(1)]],
         recipeFoods: this.fb.array([]),
@@ -210,7 +210,7 @@ export class RecipeForm {
             name: data.name,
             instructions: data.instructions,
             vegetarianStatus: data.vegetarianStatus,
-            season: data.season,
+            season: (data.season && data.season?.length > 0) ? data.season : [RecipeSeason.SPRING, RecipeSeason.SUMMER, RecipeSeason.AUTUMN, RecipeSeason.WINTER], // Default to all seasons if none selected
             category: data.category,
             servings: data.servings,
         } as Omit<RecipeDto, 'id'>;

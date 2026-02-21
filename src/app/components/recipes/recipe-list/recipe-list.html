@@ -33,7 +33,7 @@
                                 }
                             </div>
                             <div class="seasons-grid">
-                                @for (season of getSeasonsToDisplay(recipe.season); track season) {
+                                @for (season of recipe.season; track season) {
                                     <img src="assets/pictos/{{ season.toLowerCase() }}.png" [alt]="season" [title]="getSeasonLabel(season)" [width]="27" [height]="22"/>
                                 }
                             </div>

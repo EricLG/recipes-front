@@ -1,5 +1,4 @@
 export enum RecipeSeason {
-    ALL_YEAR = 'all_year', // Default
     SPRING = 'spring',
     SUMMER = 'summer',
     AUTUMN = 'autumn',
@@ -23,7 +22,6 @@ export enum RecipeVegetarianStatus {
 }
 
 export const seasonTranslations: Record<RecipeSeason, string> = {
-    all_year: "Toute l'année",
     spring: "Printemps",
     summer: "Été",
     autumn: "Automne",
