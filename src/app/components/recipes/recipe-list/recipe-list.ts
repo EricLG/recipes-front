@@ -50,9 +50,9 @@ export class RecipeList {
     }
 
     public servingMapping: {[k: string]: string} = {
-        '=0': 'Aucune part.',
-        '=1': '1 part.',
-        'other': '# parts.'
+        '=0': 'Aucune part',
+        '=1': '1 part',
+        'other': '# parts'
     }
 
 }
