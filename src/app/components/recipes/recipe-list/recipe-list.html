@@ -8,8 +8,7 @@
             <div class="card tile">
                 <a [routerLink]="['/recipes', recipe.id]" class="recipe-card-link">
                     <div class="card-body">
-                        <p class="card-title text-center font-lydian">{{ recipe.name | titlecase }}</p>
-
+                        <div class="card-title text-center font-lydian d-flex align-items-center justify-content-center">{{ recipe.name | titlecase }}</div>
                         <div class="d-flex justify-content-center">
                             @if (recipe.vegetarianStatus === 'vegetarian') {
                                 <img src="assets/recipe_vege.png" alt="Plat végétarien" width="110" height="90"/>
@@ -32,7 +31,7 @@
                                     </div>
                                 }
                             </div>
-                            <div class="seasons-grid">
+                            <div class="seasons-grid" [ngClass]="'count-' + recipe.season.length">
                                 @for (season of recipe.season; track season) {
                                     <img src="assets/pictos/{{ season.toLowerCase() }}.png" [alt]="season" [title]="getSeasonLabel(season)" [width]="27" [height]="22"/>
                                 }

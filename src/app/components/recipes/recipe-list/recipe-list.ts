@@ -20,13 +20,6 @@ export class RecipeList {
 
     public recipes$!: Observable<RecipeDto[]>;
 
-    private readonly allSeasons: RecipeSeason[] = [
-        RecipeSeason.SPRING,
-        RecipeSeason.SUMMER,
-        RecipeSeason.AUTUMN,
-        RecipeSeason.WINTER,
-    ];
-
     private readonly recipeService = inject(RecipeService);
     private readonly filterService = inject(RecipeFilterService);
 

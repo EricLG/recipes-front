@@ -30,13 +30,20 @@
     }
 }
 
-.card {
+h2 {
+    color: #212529;
+    font-weight: 700;
+    font-size: 1.75rem;
+}
+
+.tile {
+    width: 235px;
+    height: 220px;
+    border: none;
     border-radius: 0.375rem;
-    overflow: hidden;
     background-image: url('/assets/scroll.png');
     background-repeat: no-repeat;
-    border: none;
-
+    overflow: hidden;
 }
 
 .card-title {
@@ -68,25 +75,29 @@
     grid-row-gap: 0px;
 }
 
-// Header
-h2 {
-    color: #212529;
-    font-weight: 700;
-    font-size: 1.75rem;
+.seasons-grid.count-1 img {
+    grid-column: 2;
+    grid-row: 2;
 }
 
-// Buttons
-.btn-primary {
-    background-color: #2d4620;
-    border-color: var(--border-line);
-
-    &:hover {
-        background-color: #1f3114;
-        border-color: var(--border-line);
-    }
+.seasons-grid.count-2 img:nth-child(1) {
+    grid-column: 1;
+    grid-row: 2;
+}
+.seasons-grid.count-2 img:nth-child(2) {
+    grid-column: 2;
+    grid-row: 2;
 }
 
-.tile {
-    width: 235px;
-    height: 220px;
+.seasons-grid.count-3 img:nth-child(1) {
+    grid-column: 1;
+    grid-row: 2;
+}
+.seasons-grid.count-3 img:nth-child(2) {
+    grid-column: 2;
+    grid-row: 1;
+}
+.seasons-grid.count-3 img:nth-child(3) {
+    grid-column: 2;
+    grid-row: 2;
 }
