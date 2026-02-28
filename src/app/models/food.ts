@@ -19,6 +19,7 @@ export interface NutrientsDto {
     sugars: number;
     fibers: number;
     salt: number;
+    saturatedFattyAcids: number;
 }
 
 export interface MeasureDto {

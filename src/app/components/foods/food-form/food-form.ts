@@ -65,6 +65,7 @@ export class FoodForm {
             sugars: [0, [Validators.required, Validators.min(0)]],
             fibers: [0, [Validators.required, Validators.min(0)]],
             salt: [0, [Validators.required, Validators.min(0)]],
+            saturatedFattyAcids: [0, [Validators.required, Validators.min(0)]],
         }),
         measures: this.fb.array([]),
     });

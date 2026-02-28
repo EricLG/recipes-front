@@ -48,7 +48,8 @@ export class RecipeDetail {
             carbohydrates: 0,
             sugars: 0,
             fibers: 0,
-            salt: 0
+            salt: 0,
+            saturatedFattyAcids: 0,
         };
 
         // Compute totals for a recipe (including nested sub-recipes)
@@ -60,7 +61,8 @@ export class RecipeDetail {
                 carbohydrates: 0,
                 sugars: 0,
                 fibers: 0,
-                salt: 0
+                salt: 0,
+                saturatedFattyAcids: 0,
             };
 
             if (stack.has(r.id)) {
@@ -71,7 +73,8 @@ export class RecipeDetail {
                     carbohydrates: 0,
                     sugars: 0,
                     fibers: 0,
-                    salt: 0
+                    salt: 0,
+                    saturatedFattyAcids: 0,
                 };
             }
 
@@ -84,7 +87,8 @@ export class RecipeDetail {
                 carbohydrates: 0,
                 sugars: 0,
                 fibers: 0,
-                salt: 0
+                salt: 0,
+                saturatedFattyAcids: 0,
             };
 
             r.recipeFoods?.forEach(recipeFood => {
@@ -98,6 +102,7 @@ export class RecipeDetail {
                 local.sugars += n.sugars * factor;
                 local.fibers += n.fibers * factor;
                 local.salt += n.salt * factor;
+                local.saturatedFattyAcids += n.saturatedFattyAcids * factor;
             });
 
             r.recipeSubRecipes?.forEach(sub => {
@@ -115,6 +120,7 @@ export class RecipeDetail {
                 local.sugars += childTotals.sugars * scale;
                 local.fibers += childTotals.fibers * scale;
                 local.salt += childTotals.salt * scale;
+                local.saturatedFattyAcids += childTotals.saturatedFattyAcids * scale;
             });
 
             stack.delete(r.id);
@@ -130,6 +136,7 @@ export class RecipeDetail {
         totals.sugars = recipeTotals.sugars;
         totals.fibers = recipeTotals.fibers;
         totals.salt = recipeTotals.salt;
+        totals.saturatedFattyAcids = recipeTotals.saturatedFattyAcids;
 
         // Divide by servings to get nutrients per serving
         const servings = recipe.servings;
@@ -140,6 +147,7 @@ export class RecipeDetail {
         totals.sugars /= servings;
         totals.fibers /= servings;
         totals.salt /= servings;
+        totals.saturatedFattyAcids /= servings;
 
         return totals;
     });
