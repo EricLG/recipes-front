@@ -23,6 +23,7 @@ classDiagram
         number density
         Nutrients nutrientsPer100
         boolean needReview
+        string source
     }
 
     class Nutrients {

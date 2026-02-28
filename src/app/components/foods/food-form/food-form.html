@@ -31,6 +31,11 @@
             </div>
 
             <div class="mb-3">
+                <label for="source" class="form-label">Source d'informations <span class="text-danger">*</span></label>
+                <input id="source" type="text" class="form-control" formControlName="source" required aria-describedby="source-error">
+            </div>
+
+            <div class="mb-3">
                 <label for="referenceUnit" class="form-label">Unité de référence <span class="text-danger">*</span></label>
                 <input id="referenceUnit" type="text" class="form-control" formControlName="referenceUnit" required aria-describedby="referenceUnit-error">
                 @if (foodForm.get('referenceUnit')?.invalid && foodForm.get('referenceUnit')?.touched) {

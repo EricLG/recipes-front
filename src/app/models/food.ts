@@ -8,6 +8,7 @@ export interface FoodDto {
     density: number;
     nutrientsPer100: NutrientsDto;
     needReview: boolean;
+    source: string;
 }
 
 export interface NutrientsDto {

@@ -56,6 +56,7 @@ export class FoodForm {
         referenceUnit: ['', Validators.required],
         density: [0, [Validators.required, Validators.min(0)]],
         needReview: [false],
+        source: ['', Validators.required],
         nutrientsPer100: this.fb.group({
             energyKcal: [0, [Validators.required, Validators.min(0)]],
             proteins: [0, [Validators.required, Validators.min(0)]],
@@ -122,6 +123,7 @@ export class FoodForm {
             density: data.density,
             needReview: data.needReview,
             nutrientsPer100: data.nutrientsPer100,
+            source: data.source,
         } as Omit<FoodDto, 'id'>;
 
         const measures = (data.measures || []) as MeasureDto[];
