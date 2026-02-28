@@ -67,6 +67,6 @@ export interface RecipeFilterDto {
     name?: string
     category?: RecipeCategory
     seasons?: RecipeSeason[]
-    vegetarianStatus?: RecipeVegetarianStatus
+    vegetarianStatus?: RecipeVegetarianStatus[]
 
 }

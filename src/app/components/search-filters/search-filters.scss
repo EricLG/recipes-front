@@ -12,7 +12,7 @@
 }
 
 .search-filter-bar .form-control {
-    max-width: 720px; /* width of 3 selects (235px each approx) */
+    width: 100%; /* width of 3 selects (235px each approx) */
 }
 
 .search-filter-bar .select-row {
@@ -21,6 +21,6 @@
     margin-top: 0.5rem;
 }
 
-.search-filter-bar .form-select {
+.search-filter-bar .select-form {
     width: 235px;
 }

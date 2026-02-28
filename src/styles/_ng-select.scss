@@ -1,0 +1,36 @@
+// src/styles/_ng-select.scss
+// règles génériques pour un ng‑select “vert” avec texte/icone blancs
+@mixin ng-select-green {
+    .ng-select.customNgSelect {
+        .ng-placeholder,
+        .ng-multi-label-tmp,
+        .ng-value,
+        .ng-clear-wrapper {
+            color: white !important;
+        }
+
+        .ng-multi-label-tmp {
+            padding-bottom: 5px;
+            padding-left: 3px;
+        }
+
+        .ng-arrow {
+            border-top-color: white !important;
+        }
+
+        .ng-select-container {
+            background-color: var(--green);
+        }
+
+        .ng-option {
+            background-color: var(--green) !important;
+            color: white !important;
+        }
+    }
+
+    .ng-select.ng-select-opened {
+        .ng-arrow {
+            border-bottom-color: white !important;
+        }
+    }
+}
