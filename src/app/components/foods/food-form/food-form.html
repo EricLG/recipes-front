@@ -35,16 +35,6 @@
                 <input id="source" type="text" class="form-control" formControlName="source" required aria-describedby="source-error">
             </div>
 
-            <div class="mb-3">
-                <label for="density" class="form-label">Densité (g/ml)<span class="text-danger">*</span></label>
-                <input id="density" type="number" class="form-control" formControlName="density" required min="0" step="0.01" aria-describedby="density-error">
-                @if (foodForm.get('density')?.invalid && foodForm.get('density')?.touched) {
-                    <div id="density-error" class="invalid-feedback d-block">
-                        La densité doit être un nombre positif.
-                    </div>
-                }
-            </div>
-
             <div class="form-check mb-3">
                 <input id="needReview" type="checkbox" class="form-check-input" formControlName="needReview">
                 <label for="needReview" class="form-check-label">Nécessite une révision</label>
@@ -148,8 +138,12 @@
                             <div [formGroupName]="i" class="list-group-item p-3">
                                 <div class="row g-2">
                                     <div class="col-12 col-md-6">
-                                        <label [for]="'measure-label-' + i" class="form-label">Libellé <span class="text-danger">*</span></label>
-                                        <input [id]="'measure-label-' + i" type="text" class="form-control" formControlName="label" required>
+                                        <label [for]="'measure-label-' + i" class="form-label">Label (pour 1 unité)<span class="text-danger">*</span></label>
+                                        <select [id]="'measure-label-' + i" class="form-control" formControlName="label" required>
+                                            @for (option of measureLabelOptions; track option) {
+                                                <option [value]="option">{{ option }}</option>
+                                            }
+                                        </select>
                                     </div>
                                     <div class="col-12 col-md-4">
                                         <label [for]="'measure-grams-' + i" class="form-label">Grammes <span class="text-danger">*</span></label>

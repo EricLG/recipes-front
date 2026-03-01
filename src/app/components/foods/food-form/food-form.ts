@@ -49,11 +49,11 @@ export class FoodForm {
     public readonly title = computed(() => this.id() ? 'Modifier un ingrédient' : 'Ajouter un ingrédient');
     public readonly categories = Object.values(FoodCategory).sort((a, b) => categoryTranslations[a].localeCompare(categoryTranslations[b], 'fr'));
     public readonly showNewMeasureForm = signal(false);
+    public readonly measureLabelOptions = ['g', 'ml', 'dosette', 'unité', 'N/A'];
 
     public readonly foodForm = this.fb.group({
         name: ['', Validators.required],
         category: [FoodCategory.OTHER, Validators.required],
-        density: [0, [Validators.required, Validators.min(0)]],
         needReview: [false],
         source: ['', Validators.required],
         nutrientsPer100: this.fb.group({
@@ -119,7 +119,6 @@ export class FoodForm {
         const foodData = {
             name: data.name,
             category: data.category,
-            density: data.density,
             needReview: data.needReview,
             nutrientsPer100: data.nutrientsPer100,
             source: data.source,
