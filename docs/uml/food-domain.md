@@ -19,7 +19,6 @@ classDiagram
         ObjectId _id
         string name
         FoodCategory category
-        string referenceUnit
         number density
         Nutrients nutrientsPer100
         boolean needReview

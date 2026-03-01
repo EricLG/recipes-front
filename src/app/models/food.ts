@@ -4,8 +4,7 @@ export interface FoodDto {
     id: string;
     name: string;
     category: FoodCategory;
-    referenceUnit: string;
-    density: number;
+    density: number; // g/mL
     nutrientsPer100: NutrientsDto;
     needReview: boolean;
     source: string;

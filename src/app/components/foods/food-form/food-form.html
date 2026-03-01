@@ -36,17 +36,7 @@
             </div>
 
             <div class="mb-3">
-                <label for="referenceUnit" class="form-label">Unité de référence <span class="text-danger">*</span></label>
-                <input id="referenceUnit" type="text" class="form-control" formControlName="referenceUnit" required aria-describedby="referenceUnit-error">
-                @if (foodForm.get('referenceUnit')?.invalid && foodForm.get('referenceUnit')?.touched) {
-                    <div id="referenceUnit-error" class="invalid-feedback d-block">
-                        L'unité de référence est requise.
-                    </div>
-                }
-            </div>
-
-            <div class="mb-3">
-                <label for="density" class="form-label">Densité <span class="text-danger">*</span></label>
+                <label for="density" class="form-label">Densité (g/ml)<span class="text-danger">*</span></label>
                 <input id="density" type="number" class="form-control" formControlName="density" required min="0" step="0.01" aria-describedby="density-error">
                 @if (foodForm.get('density')?.invalid && foodForm.get('density')?.touched) {
                     <div id="density-error" class="invalid-feedback d-block">

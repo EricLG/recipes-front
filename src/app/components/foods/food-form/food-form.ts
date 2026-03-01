@@ -53,7 +53,6 @@ export class FoodForm {
     public readonly foodForm = this.fb.group({
         name: ['', Validators.required],
         category: [FoodCategory.OTHER, Validators.required],
-        referenceUnit: ['', Validators.required],
         density: [0, [Validators.required, Validators.min(0)]],
         needReview: [false],
         source: ['', Validators.required],
@@ -120,7 +119,6 @@ export class FoodForm {
         const foodData = {
             name: data.name,
             category: data.category,
-            referenceUnit: data.referenceUnit,
             density: data.density,
             needReview: data.needReview,
             nutrientsPer100: data.nutrientsPer100,
