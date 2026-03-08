@@ -4,6 +4,7 @@ import { RouterModule } from '@angular/router';
 import { Observable } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
+import { Icon } from '../../utils/icon/icon';
 import { RecipeFilterService } from '../recipe-filter.service';
 import { RecipeSeason, RecipeCategory, seasonTranslations, recipeCategoryTranslations } from './../../../enums/recipes.enum';
 import { RecipeDto } from './../../../models/recipe';
@@ -11,7 +12,11 @@ import { RecipeService } from './../recipe.service';
 
 @Component({
     selector: 'recipe-list',
-    imports: [CommonModule, RouterModule],
+    imports: [
+        CommonModule,
+        RouterModule,
+        Icon,
+    ],
     templateUrl: './recipe-list.html',
     styleUrls: ['./recipe-list.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,

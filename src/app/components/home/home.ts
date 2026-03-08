@@ -1,4 +1,7 @@
-import { Component } from "@angular/core";
+import { Component, inject } from "@angular/core";
+import { Router } from "@angular/router";
+
+import { RecipeFilterService } from "../recipes/recipe-filter.service";
 
 @Component({
     selector: 'home',
@@ -6,4 +9,14 @@ import { Component } from "@angular/core";
     styles: '',
     imports: []
 })
-export class Home { }
+export class Home {
+
+    private readonly svcRecipeFilter = inject(RecipeFilterService);
+    private readonly router = inject(Router);
+
+    constructor() {
+        this.svcRecipeFilter.resetFilter()
+        this.router.navigate(['recipes'])
+    }
+
+}
