@@ -2,11 +2,18 @@
 // règles génériques pour un ng‑select “vert” avec texte/icone blancs
 @mixin ng-select-green {
     .ng-select.customNgSelect {
+        .ng-option,
         .ng-placeholder,
         .ng-multi-label-tmp,
         .ng-value,
         .ng-clear-wrapper {
             color: white !important;
+        }
+
+        .ng-placeholder {
+            font-family: 'Lydian';
+            font-weight: 700;
+            font-size: 18px;
         }
 
         .ng-multi-label-tmp {
@@ -23,8 +30,10 @@
         }
 
         .ng-option {
-            background-color: var(--green) !important;
-            color: white !important;
+            background-color: var(--green)!important;
+            &.ng-option-marked {
+                font-weight: 900!important;
+            }
         }
     }
 

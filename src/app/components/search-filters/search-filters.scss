@@ -4,23 +4,23 @@
     width: 100%;
 }
 
-/* Align search above selects and center the whole filter block */
-.search-filter-bar {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-.search-filter-bar .form-control {
-    width: 100%; /* width of 3 selects (235px each approx) */
-}
-
 .search-filter-bar .select-row {
     display: flex;
     gap: 0.75rem;
-    margin-top: 0.5rem;
 }
 
 .search-filter-bar .select-form {
     width: 235px;
+}
+
+.input-group-text, .form-control {
+    background-color: var(--cream);
+    border: 1px solid var(--brown);
+}
+
+.form-control, .form-control::placeholder {
+    color: var(--green);
+    font-family: 'Lydian';
+    font-weight: 700;
+    font-size: 18px;
 }

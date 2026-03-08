@@ -1,6 +1,9 @@
-<div class="search-filter-bar mb-4 p-3">
-    <form [formGroup]="filterForm">
-        <input class="form-control mb-2" type="text" placeholder="Recherche" aria-label="Recherche des recettes" formControlName="name" maxlength="40">
+<div class="search-filter-bar my-3">
+    <form [formGroup]="filterForm" class="d-flex flex-column gap-2">
+        <div class="input-group">
+            <span class="input-group-text" id="text-filter"><app-icon name="search_lens.png" alt="" size="m"></app-icon></span>
+            <input class="form-control" type="text" placeholder="Recherche" aria-label="Recherche des recettes" formControlName="name" maxlength="40" aria-labelledby="text-filter">
+        </div>
         <div class="select-row">
             <ng-select class="customNgSelect select-form" [searchable]="false" [closeOnSelect]="false" placeholder="Catégorie" [items]="categories" bindValue="id" formControlName="category"></ng-select>
             <ng-select class="customNgSelect select-form" [searchable]="false" [closeOnSelect]="false" placeholder="Saison" [items]="seasons" bindValue="id" [multiple]="true" formControlName="seasons">

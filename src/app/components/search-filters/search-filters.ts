@@ -8,6 +8,7 @@ import { debounceTime, Subscription } from "rxjs";
 import { Option, toOptions } from "../../enums/enum-utils";
 import { RecipeCategory, RecipeSeason, RecipeVegetarianStatus, recipeCategoryTranslations, seasonTranslations, recipeVegetarianStatusTranslations } from "../../enums/recipes.enum";
 import { RecipeFilterService } from "../recipes/recipe-filter.service";
+import { Icon } from "../utils/icon/icon";
 import { RecipeFilterDto } from './../../models/recipe';
 
 interface RecipeFilterDtoFormgroup {
@@ -25,6 +26,7 @@ interface RecipeFilterDtoFormgroup {
         CommonModule,
         FormsModule,
         ReactiveFormsModule,
+        Icon,
         NgSelectComponent,
         NgOptionTemplateDirective,
         NgMultiLabelTemplateDirective,

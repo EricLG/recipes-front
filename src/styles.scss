@@ -10,6 +10,7 @@
     --cream: #F0DEC0;
     --cream-rgb: 240, 222, 192;
     --cream-35: rgba(var(--cream-rgb), 0.35);
+    --cream-50: rgba(var(--cream-rgb), 0.50);
     --brown: #764C29;
 }
 
@@ -25,7 +26,7 @@ h2, .page-title {
     font-family: 'Cinzel', serif;
 }
 
-h3, h4, h5, .secondary-title, .recipe-card-header h6, .font-lydian {
+h3, h4, h5, .recipe-card-header h6, .font-lydian {
     font-family: 'Lydian', serif;
 }
 
@@ -36,6 +37,11 @@ h3, h4, h5, .secondary-title, .recipe-card-header h6, .font-lydian {
     background-color: var(--green-light) !important;
 }
 
+.form-control:focus,
+.form-select:focus {
+  border-color: #F0DEC0;
+  box-shadow: 0 0 0 0.25rem var(--cream-50);
+}
 
 .pointer {
     cursor: pointer;
