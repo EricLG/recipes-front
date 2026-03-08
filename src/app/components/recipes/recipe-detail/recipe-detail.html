@@ -45,6 +45,20 @@
         </div>
     }
 
+    @if (recipe.preparationTime) {
+        <div class="mb-4">
+            <h5>Temps de préparation</h5>
+            <p class="pre-line">{{ recipe.preparationTime }}</p>
+        </div>
+    }
+
+    @if (recipe.kitchenTools) {
+        <div class="mb-4">
+            <h5>Ustensiles</h5>
+            <p class="pre-line">{{ recipe.kitchenTools }}</p>
+        </div>
+    }
+
     <div class="mb-4">
         <h5 class="mb-3">Ingrédients</h5>
         @if (recipe.recipeFoods && recipe.recipeFoods.length > 0) {

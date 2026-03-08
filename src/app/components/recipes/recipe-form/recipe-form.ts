@@ -87,6 +87,8 @@ export class RecipeForm {
         season: [[] as RecipeSeason[]],
         category: [RecipeCategory.MAIN],
         servings: [1, [Validators.required, Validators.min(1)]],
+        preparationTime: [''],
+        kitchenTools: [''],
         recipeFoods: this.fb.array([]),
         recipeSubRecipes: this.fb.array([]),
     });
@@ -213,6 +215,8 @@ export class RecipeForm {
             season: (data.season && data.season?.length > 0) ? data.season : [RecipeSeason.SPRING, RecipeSeason.SUMMER, RecipeSeason.AUTUMN, RecipeSeason.WINTER], // Default to all seasons if none selected
             category: data.category,
             servings: data.servings,
+            preparationTime: data.preparationTime,
+            kitchenTools: data.kitchenTools,
         } as Omit<RecipeDto, 'id'>;
 
         // Normalize recipeFoods: remove `id` property when null/undefined (REST best practice)

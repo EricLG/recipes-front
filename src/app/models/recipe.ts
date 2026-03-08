@@ -9,6 +9,8 @@ export interface RecipeDto {
     season: RecipeSeason[];
     category: RecipeCategory;
     servings: number;
+    preparationTime?: string
+    kitchenTools?: string
 }
 
 export interface RecipeFoodDto {
@@ -26,14 +28,7 @@ export interface RecipeSubRecipeDto {
     quantity: number;
 }
 
-export interface DetailedRecipeDTO {
-    id: string;
-    name: string;
-    instructions: string;
-    vegetarianStatus: RecipeVegetarianStatus;
-    season: RecipeSeason[];
-    category: RecipeCategory;
-    servings: number;
+export interface DetailedRecipeDTO extends RecipeDto {
     recipeFoods: {
         id: string;
         recipeId: string;
