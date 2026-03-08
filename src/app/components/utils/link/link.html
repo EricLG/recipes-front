@@ -1,0 +1,8 @@
+<a class="d-flex align-items-center justify-content-start gap-2" [ngClass]="classes" [routerLink]="routerLink" routerLinkActive="active">
+    @if (iconName) {
+        <app-icon [name]="iconName" alt="" [size]="iconSize"></app-icon>
+    }
+    @if (!iconOnly) {
+        <div><span class="align-middle">{{ label }}</span></div>
+    }
+</a>

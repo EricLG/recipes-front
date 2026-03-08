@@ -7,8 +7,10 @@
     --border-line: #d9cdb9;
     --green: #3D5F2F;
     --green-light: #008c45;
-    --cream: #EAD4AD;
-    --brown: #754C29;
+    --cream: #F0DEC0;
+    --cream-rgb: 240, 222, 192;
+    --cream-35: rgba(var(--cream-rgb), 0.35);
+    --brown: #764C29;
 }
 
 @include ngSelect.ng-select-green; // applique les règles
@@ -16,6 +18,7 @@
 /* Typography */
 body {
     font-family: 'Roboto', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+    font-weight: 500;
 }
 
 h2, .page-title {
@@ -31,4 +34,9 @@ h3, h4, h5, .secondary-title, .recipe-card-header h6, .font-lydian {
 }
 .bg-green-light {
     background-color: var(--green-light) !important;
+}
+
+
+.pointer {
+    cursor: pointer;
 }

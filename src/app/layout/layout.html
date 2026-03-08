@@ -8,7 +8,7 @@
             </svg>
         </button>
 
-        <a class="navbar-brand page-title" routerLink="/">La taverne de May</a>
+        <a class="navbar-brand page-title" routerLink="/">{{ 'La taverne de May' | uppercase}}</a>
 
     </div>
 </nav>
@@ -17,27 +17,17 @@
 <div class="layout-container">
     <!-- Sidebar Navigation (Desktop) -->
     <nav class="sidebar d-none d-lg-flex flex-column">
-        <div class="d-flex align-items-center justify-content-center mt-3">
+        <div class="d-flex justify-content-center mt-3">
             <img src="assets/may_picto.png" alt="May logo" class="logo-img"/>
         </div>
 
         <div class="p-3">
-            <a class="btn btn-outline-success w-100 d-flex align-items-center justify-content-center mb-3" routerLink="/recipes/add">
-                <!-- Pencil icon -->
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil me-2" viewBox="0 0 16 16">
-                    <path d="M12.146.854a.5.5 0 0 1 .708 0l2.292 2.292a.5.5 0 0 1 0 .708l-9.193 9.193a.5.5 0 0 1-.168.11l-4 1.5a.5.5 0 0 1-.65-.65l1.5-4a.5.5 0 0 1 .11-.168L12.146.854zM11.207 2L3 10.207V13h2.793L14 4.793 11.207 2z"/>
-                </svg>
-                Créer une recette
-            </a>
+            <app-link display="btn" label="Créer une recette" routerLink="/recipes/add" iconName="create_recipe.png" iconSize="l"></app-link>
 
             <ul class="nav flex-column mt-2">
                 @for (link of links; track link) {
                     <li class="nav-item mb-2">
-                        @if (link.path === 'recipes') {
-                            <a class="nav-link" (click)="goToAllRecipes()" style="cursor: pointer;">{{ link.title }}</a>
-                        } @else {
-                            <a class="nav-link" [routerLink]="link.path" routerLinkActive="active">{{ link.title }}</a>
-                        }
+                        <app-link display="list" (click)="goToAllRecipes(link.path)" [label]="link.title" [routerLink]="link.path" [iconName]="link.icon" iconSize="l"></app-link>
                     </li>
                 }
             </ul>
@@ -57,11 +47,7 @@
             <ul class="nav flex-column">
                 @for (link of links; track link) {
                     <li class="nav-item">
-                        @if (link.path === 'recipes') {
-                            <a class="nav-link" (click)="goToAllRecipes(); closeSidebar()" style="cursor: pointer;">{{ link.title }}</a>
-                        } @else {
-                            <a class="nav-link" [routerLink]="link.path" routerLinkActive="active" (click)="closeSidebar()">{{ link.title }}</a>
-                        }
+                            <a class="nav-link" [routerLink]="link.path" routerLinkActive="active" (click)="goToAllRecipes(link.path); closeSidebar()">{{ link.title }}</a>
                     </li>
                 }
             </ul>

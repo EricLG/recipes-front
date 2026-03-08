@@ -1,10 +1,11 @@
 import { CommonModule } from "@angular/common";
 import { ChangeDetectionStrategy, Component, inject, signal } from "@angular/core";
-import { ActivatedRoute, Router, RouterModule } from "@angular/router";
+import { ActivatedRoute, RouterModule } from "@angular/router";
 import { NgbDropdownModule, NgbNavModule, NgbOffcanvasModule } from "@ng-bootstrap/ng-bootstrap";
 
 import { RecipeFilterService } from "../components/recipes/recipe-filter.service";
 import { SearchFilters } from "../components/search-filters/search-filters";
+import { Link } from "../components/utils/link/link";
 
 @Component({
     selector: 'layout',
@@ -17,31 +18,32 @@ import { SearchFilters } from "../components/search-filters/search-filters";
         NgbNavModule,
         NgbDropdownModule,
         NgbOffcanvasModule,
-        SearchFilters
+        SearchFilters,
+        Link
     ]
 })
 export class Layout {
 
+    private readonly filterService = inject(RecipeFilterService);
+
     public links = [
-        { title: 'Recettes', path: 'recipes' },
-        { title: 'Ingrédients', path: 'foods' },
-        { title: 'Menu', path: 'coming-soon' }
+        { title: 'Recettes', path: 'recipes', icon: 'list_recipes.png' },
+        { title: 'Ingrédients', path: 'foods', icon: 'list_food.png' },
+        { title: 'Planifier ma semaine', path: 'coming-soon', icon: 'planning_week.png' },
+        { title: 'Liste de courses', path: 'coming-soon', icon: 'shopping_list.png' },
     ];
 
     public isSidebarOpen = signal(false);
 
-    private readonly filterService = inject(RecipeFilterService);
-    private readonly router = inject(Router);
-
-    public goToAllRecipes(): void {
-        console.log('goToAllRecipes');
-        this.filterService.resetFilter();
-        this.router.navigate(['/recipes']);
-    }
-
     constructor(
         public route: ActivatedRoute
     ) {}
+
+    public goToAllRecipes(path: string): void {
+        if (path === 'recipes') {
+            this.filterService.resetFilter();
+        }
+    }
 
     public toggleSidebar(): void {
         this.isSidebarOpen.update(v => !v);
