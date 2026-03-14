@@ -1,5 +1,5 @@
 import { CommonModule } from "@angular/common";
-import { ChangeDetectionStrategy, Component, inject, signal } from "@angular/core";
+import { ChangeDetectionStrategy, Component, inject } from "@angular/core";
 import { ActivatedRoute, RouterModule } from "@angular/router";
 import { NgbDropdownModule, NgbNavModule, NgbOffcanvasModule } from "@ng-bootstrap/ng-bootstrap";
 
@@ -26,14 +26,12 @@ export class Layout {
 
     private readonly filterService = inject(RecipeFilterService);
 
-    public links = [
+    public readonly links = [
         { title: 'Recettes', path: 'recipes', icon: 'list_recipes.png' },
         { title: 'Ingrédients', path: 'foods', icon: 'list_food.png' },
         { title: 'Planifier ma semaine', path: 'coming-soon', icon: 'planning_week.png' },
         { title: 'Liste de courses', path: 'coming-soon', icon: 'shopping_list.png' },
     ];
-
-    public isSidebarOpen = signal(false);
 
     constructor(
         public route: ActivatedRoute
@@ -45,12 +43,8 @@ export class Layout {
         }
     }
 
-    public toggleSidebar(): void {
-        this.isSidebarOpen.update(v => !v);
-    }
-
-    public closeSidebar(): void {
-        this.isSidebarOpen.set(false);
+    public closeMenu(toggle: HTMLInputElement) {
+        toggle.checked = false;
     }
 
 }

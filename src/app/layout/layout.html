@@ -1,64 +1,42 @@
-<!-- Navbar -->
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top" style="background-color: var(--green) !important;">
-    <div class="container-fluid">
-        <!-- Hamburger Menu -->
-        <button class="btn btn-link text-white d-lg-none me-2" (click)="toggleSidebar()" aria-label="Menu" aria-expanded="false">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 16 16">
-                <path fill-rule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z"/>
-            </svg>
-        </button>
+<input #menuToggle type="checkbox" id="menu-toggle" class="menu-toggle"/>
 
-        <a class="navbar-brand page-title" routerLink="/">{{ 'La taverne de May' | uppercase}}</a>
+<header class="navbar navbar-dark bg-green ps-3">
+    <label for="menu-toggle" class="menu-button d-lg-none">
+        <span class="hamburger"></span>
+    </label>
+    <a routerLink="/" class="navbar-brand font-cinzel fw-bold text-white">La taverne de May</a>
+</header>
 
-    </div>
-</nav>
+<div class="layout">
 
-<!-- Main Layout Container -->
-<div class="layout-container">
-    <!-- Sidebar Navigation (Desktop) -->
-    <nav class="sidebar d-none d-lg-flex flex-column">
-        <div class="d-flex justify-content-center mt-3">
-            <img src="assets/may_picto.png" alt="May logo" class="logo-img"/>
+    <!-- sidebar -->
+    <aside class="sidebar">
+        <div class="logo-wrapper">
+            <img src="assets/may_picto.png" class="logo-img"/>
         </div>
 
         <div class="p-3">
             <app-link display="btn" label="Créer une recette" routerLink="/recipes/add" iconName="create_recipe.png" iconSize="l"></app-link>
 
-            <ul class="nav flex-column mt-2">
+            <ul class="nav mt-2">
                 @for (link of links; track link) {
-                    <li class="nav-item mb-2">
-                        <app-link display="list" (click)="goToAllRecipes(link.path)" [label]="link.title" [routerLink]="link.path" [iconName]="link.icon" iconSize="l"></app-link>
+                    <li class="w-100">
+                        <app-link display="list" (click)="closeMenu(menuToggle); goToAllRecipes(link.path)" [label]="link.title" [routerLink]="link.path" [iconName]="link.icon" iconSize="l"> </app-link>
                     </li>
                 }
             </ul>
         </div>
-    </nav>
+    </aside>
 
-    <!-- Mobile Sidebar Offcanvas -->
-    <div class="offcanvas offcanvas-start" [class.show]="isSidebarOpen()" tabindex="-1" id="offcanvasSidebar">
-        @if (isSidebarOpen()) {
-            <div class="offcanvas-backdrop fade show" (click)="closeSidebar()"></div>
-        }
-        <div class="offcanvas-header">
-            <h5 class="offcanvas-title">Navigation</h5>
-            <button type="button" class="btn-close" (click)="closeSidebar()" aria-label="Close"></button>
+    <!-- main -->
+    <main class="main-area">
+        <div>
+            <app-search-filters></app-search-filters>
         </div>
-        <div class="offcanvas-body p-0">
-            <ul class="nav flex-column">
-                @for (link of links; track link) {
-                    <li class="nav-item">
-                            <a class="nav-link" [routerLink]="link.path" routerLinkActive="active" (click)="goToAllRecipes(link.path); closeSidebar()">{{ link.title }}</a>
-                    </li>
-                }
-            </ul>
+        <div class="content-area p-4">
+            <router-outlet></router-outlet>
         </div>
-    </div>
-
-    <section class="d-flex flex-column flex-grow-1 align-items-center justify-content-start">
-        <app-search-filters></app-search-filters>
-
-        <div class="content-wrapper">
-            <router-outlet />
-        </div>
-    </section>
+    </main>
 </div>
+
+<label for="menu-toggle" class="menu-backdrop"></label>
