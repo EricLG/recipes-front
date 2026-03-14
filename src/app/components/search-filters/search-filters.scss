@@ -1,16 +1,30 @@
-// Search and Filter Bar
-.search-filter-bar {
-    background-color: #ffffff !important;
-    width: 100%;
+/* GRID FILTRES */
+.filters-grid {
+    display: grid;
+    gap: 0.5rem;
+
+    /* mobile par défaut */
+    grid-template-columns: 1fr;
 }
 
-.search-filter-bar .select-row {
-    display: flex;
-    gap: 0.75rem;
+/* tablette */
+@media (min-width: 576px) {
+    .filters-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
 }
 
-.search-filter-bar .select-form {
-    width: 235px;
+/* desktop */
+@media (min-width: 992px) {
+    .filters-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+/* largeur complète des selects */
+
+.filters-grid ng-select {
+    min-width: 250px;
 }
 
 .input-group-text, .form-control {
