@@ -15,7 +15,7 @@ import { filter, map, switchMap } from 'rxjs/operators';
 
 import { RecipeCategory, RecipeSeason, seasonTranslations, recipeCategoryTranslations, RecipeVegetarianStatus, recipeVegetarianStatusTranslations } from '../../../enums/recipes.enum';
 import { MeasureDto } from '../../../models/food';
-import { RecipeDto, RecipeWithRelationsDto } from '../../../models/recipe';
+import { RecipeDto } from '../../../models/recipe';
 import { FoodService } from '../../foods/food.service';
 import { MeasureService } from '../../foods/measure.service';
 import { RecipeService } from '../recipe.service';
@@ -104,6 +104,10 @@ export class RecipeForm {
             if (recipe) {
                 const { recipeFoods, recipeSubRecipes, ...recipeData } = recipe;
                 this.recipeForm.patchValue(recipeData);
+
+                if (recipe.imageUrl) {
+                    this.imagePreview.set(`api/${recipe.imageUrl}`);
+                }
 
                 // Clear existing arrays
                 this.recipeFoodsArray.clear();
@@ -246,23 +250,57 @@ export class RecipeForm {
             return copy;
         });
 
+        // ✅ Construit le FormData
+        const formData = new FormData();
+
+        // Sérialise les données JSON dans un champ "data"
+        formData.append('data', JSON.stringify({
+            ...recipeData,
+            recipeFoods,
+            recipeSubRecipes,
+            ...(this.id() ? { id: this.id() } : {}),
+        }));
+
+        // Ajoute l'image si présente
+        if (this.selectedFile) {
+            formData.append('image', this.selectedFile);
+        }
+
         const createOrUpdate$ = this.id()
-            ? this.svcRecipe.updateWithRelations({
-                ...recipeData,
-                id: this.id()!,
-                recipeFoods,
-                recipeSubRecipes
-            } as RecipeWithRelationsDto)
-            : this.svcRecipe.createWithRelations({
-                ...recipeData,
-                recipeFoods,
-                recipeSubRecipes,
-            } as Omit<RecipeWithRelationsDto, 'id'>);
+            ? this.svcRecipe.updateWithRelations(this.id()!, formData)
+            : this.svcRecipe.createWithRelations(formData);
 
         createOrUpdate$.subscribe({
             next: (recipe) => this.router.navigate(['/recipes', recipe.id]),
             error: (err) => console.error('Erreur sauvegarde:', err)
         });
+    }
+
+
+    // Gestion des images
+    // Signal pour la prévisualisation de l'image
+    public readonly imagePreview = signal<string | null>(null);
+    private selectedFile: File | null = null;
+
+    // Appelé quand l'utilisateur sélectionne un fichier
+    public onFileChange(event: Event): void {
+        const input = event.target as HTMLInputElement;
+        const file = input.files?.[0] ?? null;
+        this.selectedFile = file;
+
+        if (file) {
+            // Génère une URL de prévisualisation locale
+            const reader = new FileReader();
+            reader.onload = () => this.imagePreview.set(reader.result as string);
+            reader.readAsDataURL(file);
+        } else {
+            this.imagePreview.set(null);
+        }
+    }
+
+    public removeImage(): void {
+        this.selectedFile = null;
+        this.imagePreview.set(null);
     }
 
 }

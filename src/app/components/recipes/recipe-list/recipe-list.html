@@ -10,7 +10,9 @@
                     <div class="card-body">
                         <div class="card-title text-center font-lydian d-flex align-items-center justify-content-center">{{ recipe.name | titlecase }}</div>
                         <div class="d-flex justify-content-center">
-                            @if (recipe.vegetarianStatus === 'vegetarian') {
+                            @if (recipe.imageUrl) {
+                                <img [src]="recipe.imageUrl" [alt]="'Photo de ' + recipe.name" width="125" height="90">
+                            } @else if (recipe.vegetarianStatus === 'vegetarian') {
                                 <img src="assets/recipe_vege.png" alt="Plat végétarien" width="110" height="90"/>
                             } @else if ( recipe.vegetarianStatus === 'non_vegetarian') {
                                 <img src="assets/recipe_meat.png" alt="Plat non végétarien" width="110" height="90"/>

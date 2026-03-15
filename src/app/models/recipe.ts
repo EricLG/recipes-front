@@ -12,6 +12,7 @@ export interface RecipeDto {
     preparationTime?: string
     kitchenTools?: string
     remark?: string
+    imageUrl: string
 }
 
 export interface RecipeFoodDto {

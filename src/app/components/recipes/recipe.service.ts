@@ -15,24 +15,12 @@ export class RecipeService {
         return this.http.get<RecipeDto[]>(`${API_BASE_URL}/recipes`);
     }
 
-    getById(id: string): Observable<RecipeDto | undefined> {
-        return this.http.get<RecipeDto>(`${API_BASE_URL}/recipes/${id}`);
+    createWithRelations(formData: FormData): Observable<RecipeWithRelationsDto> {
+        return this.http.post<RecipeWithRelationsDto>(`${API_BASE_URL}/recipes/with-relations`, formData);
     }
 
-    create(recipe: Omit<RecipeDto, 'id'>): Observable<RecipeDto> {
-        return this.http.post<RecipeDto>(`${API_BASE_URL}/recipes`, recipe);
-    }
-
-    createWithRelations(recipe: Omit<RecipeWithRelationsDto, 'id'>): Observable<RecipeWithRelationsDto> {
-        return this.http.post<RecipeWithRelationsDto>(`${API_BASE_URL}/recipes/with-relations`, recipe);
-    }
-
-    update(recipe: RecipeDto): Observable<RecipeDto> {
-        return this.http.put<RecipeDto>(`${API_BASE_URL}/recipes/${recipe.id}`, recipe);
-    }
-
-    updateWithRelations(recipe: RecipeWithRelationsDto): Observable<RecipeWithRelationsDto> {
-        return this.http.put<RecipeWithRelationsDto>(`${API_BASE_URL}/recipes/${recipe.id}/with-relations`, recipe);
+    updateWithRelations(id: string, formData: FormData): Observable<RecipeWithRelationsDto> {
+        return this.http.put<RecipeWithRelationsDto>(`${API_BASE_URL}/recipes/${id}/with-relations`, formData);
     }
 
     delete(id: string): Observable<void> {

@@ -15,6 +15,17 @@
         </div>
     </div>
 
+@if (recipe.imageUrl) {
+    <div class="mb-4">
+        <img [src]="recipe.imageUrl" [alt]="'Photo de ' + recipe.name" class="recipe-image" width="235" height="180">
+    </div>
+} @else {
+    <div>
+        Pas de photo.
+        {{ recipe.imageUrl }}
+    </div>
+}
+
     <div class="row mb-4">
         <div class="col-12 col-md-6">
             <div class="card">

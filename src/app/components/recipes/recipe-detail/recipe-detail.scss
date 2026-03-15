@@ -37,3 +37,11 @@ table {
     white-space: pre-wrap;
     word-wrap: break-word;
 }
+
+.recipe-image {
+    border: none;
+    // border-radius: 0.375rem;
+    background-image: url('/assets/scroll.png');
+    background-repeat: no-repeat;
+
+}

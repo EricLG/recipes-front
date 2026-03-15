@@ -67,12 +67,12 @@
                         @for (season of seasons; track season) {
                             <div class="form-check">
                                 <input
-                                    type="checkbox"
-                                    class="form-check-input"
-                                    [id]="'season-' + season"
-                                    [checked]="isSeasonChecked(season)"
-                                    (change)="toggleSeason(season)"
-                                    [aria-label]="'Saison ' + getSeasonLabel(season)">
+                                type="checkbox"
+                                class="form-check-input"
+                                [id]="'season-' + season"
+                                [checked]="isSeasonChecked(season)"
+                                (change)="toggleSeason(season)"
+                                [aria-label]="'Saison ' + getSeasonLabel(season)">
                                 <label class="form-check-label" [for]="'season-' + season">
                                     {{ getSeasonLabel(season) }}
                                 </label>
@@ -100,93 +100,108 @@
                     </div>
                 }
             </div>
-        </fieldset>
 
-        <!-- Recipe Foods Section -->
-        <fieldset class="mb-5 pb-4 border-bottom">
-            <legend class="h5 mb-3">Ingrédients</legend>
+            <div class="mb-3">
+                <label for="image" class="form-label">Photo de la recette</label>
 
-            <div formArrayName="recipeFoods">
-                @if (recipeFoodsArray.length > 0) {
-                    <div class="list-group mb-3">
-                        @for (food of recipeFoodsArray.controls; let i = $index; track food) {
-                            <div [formGroupName]="i" class="list-group-item p-3">
-                                <div class="row g-2">
-                                    <div class="col-12 col-md-5">
-                                        <label [for]="'food-id-' + i" class="form-label">Ingrédient <span class="text-danger">*</span></label>
-                                        <select [id]="'food-id-' + i" class="form-select" formControlName="foodId" required>
-                                            <option value="">Sélectionner un ingrédient</option>
-                                            @for (f of foods(); track f.id) {
-                                                <option [value]="f.id">{{ f.name }}</option>
-                                            }
-                                        </select>
-                                    </div>
-                                    <div class="col-12 col-md-4">
-                                        <label [for]="'measure-id-' + i" class="form-label">Portion <span class="text-danger">*</span></label>
-                                        <select [id]="'measure-id-' + i" class="form-select" formControlName="measureId" required>
-                                            <option value="">Sélectionner une portion</option>
-                                            @for (m of getMeasuresForFood(food.get('foodId')?.value); track m.id) {
-                                                <option [value]="m.id">{{ m.label }}</option>
-                                            }
-                                        </select>
-                                    </div>
-                                    <div class="col-12 col-md-2">
-                                        <label [for]="'quantity-' + i" class="form-label">Quantité <span class="text-danger">*</span></label>
-                                        <input [id]="'quantity-' + i" type="number" class="form-control" formControlName="quantity" required min="0.1" step="0.1">
-                                    </div>
-                                    <div class="col-12">
-                                        <button type="button" class="btn btn-sm btn-outline-danger" (click)="removeRecipeFood(i)">Supprimer cet ingrédient</button>
-                                    </div>
-                                </div>
-                            </div>
-                        }
+                <!-- Prévisualisation si image existante (edit) ou nouvelle sélection -->
+                @if (imagePreview()) {
+                    <div class="mb-2">
+                        <img [src]="imagePreview()" alt="Aperçu de la nouvelle recette" class="img-thumbnail"  width="110" height="90">
+                        <button type="button" class="btn btn-sm btn-outline-danger ms-2" (click)="removeImage()">Supprimer l'image</button>
                     </div>
-                }
-            </div>
+            }
 
-            <button type="button" class="btn btn-outline-primary" (click)="addNewRecipeFood()">Ajouter un ingrédient</button>
-        </fieldset>
-
-        <!-- Recipe Sub-Recipes Section -->
-        <fieldset class="mb-5 pb-4 border-bottom">
-            <legend class="h5 mb-3">Sous-recettes</legend>
-
-            <div formArrayName="recipeSubRecipes">
-                @if (recipeSubRecipesArray.length > 0) {
-                    <div class="list-group mb-3">
-                        @for (subRecipe of recipeSubRecipesArray.controls; let i = $index; track subRecipe) {
-                            <div [formGroupName]="i" class="list-group-item p-3">
-                                <div class="row g-2">
-                                    <div class="col-12 col-md-8">
-                                        <label [for]="'child-recipe-id-' + i" class="form-label">Recette <span class="text-danger">*</span></label>
-                                        <select [id]="'child-recipe-id-' + i" class="form-select" formControlName="childRecipeId" required>
-                                            <option value="">Sélectionner une recette</option>
-                                            @for (r of recipes(); track r.id) {
-                                                <option [value]="r.id">{{ r.name }}</option>
-                                            }
-                                        </select>
-                                    </div>
-                                    <div class="col-12 col-md-4">
-                                        <label [for]="'sub-recipe-quantity-' + i" class="form-label">Quantité <span class="text-danger">*</span></label>
-                                        <input [id]="'sub-recipe-quantity-' + i" type="number" class="form-control" formControlName="quantity" required min="0.1" step="0.1">
-                                    </div>
-                                    <div class="col-12">
-                                        <button type="button" class="btn btn-sm btn-outline-danger" (click)="removeSubRecipe(i)">Supprimer cette sous-recette</button>
-                                    </div>
-                                </div>
-                            </div>
-                        }
-                    </div>
-                }
-            </div>
-
-            <button type="button" class="btn btn-outline-primary" (click)="addNewSubRecipe()">Ajouter une sous-recette</button>
-        </fieldset>
-
-        <!-- Submit Buttons -->
-        <div class="d-flex gap-2">
-            <a class="btn btn-secondary" [routerLink]="['/recipes', id()]">Annuler</a>
-            <button type="submit" class="btn btn-primary" [disabled]="recipeForm.invalid">Enregistrer</button>
+            <input id="image" type="file" class="form-control" accept="image/jpeg,image/png,image/webp" (change)="onFileChange($event)">
+            <div class="form-text">Formats acceptés : JPG, PNG, WEBP. Taille max : 5 Mo.</div>
         </div>
-    </form>
+    </fieldset>
+
+    <!-- Recipe Foods Section -->
+    <fieldset class="mb-5 pb-4 border-bottom">
+        <legend class="h5 mb-3">Ingrédients</legend>
+
+        <div formArrayName="recipeFoods">
+            @if (recipeFoodsArray.length > 0) {
+                <div class="list-group mb-3">
+                    @for (food of recipeFoodsArray.controls; let i = $index; track food) {
+                        <div [formGroupName]="i" class="list-group-item p-3">
+                            <div class="row g-2">
+                                <div class="col-12 col-md-5">
+                                    <label [for]="'food-id-' + i" class="form-label">Ingrédient <span class="text-danger">*</span></label>
+                                    <select [id]="'food-id-' + i" class="form-select" formControlName="foodId" required>
+                                        <option value="">Sélectionner un ingrédient</option>
+                                        @for (f of foods(); track f.id) {
+                                            <option [value]="f.id">{{ f.name }}</option>
+                                        }
+                                    </select>
+                                </div>
+                                <div class="col-12 col-md-4">
+                                    <label [for]="'measure-id-' + i" class="form-label">Portion <span class="text-danger">*</span></label>
+                                    <select [id]="'measure-id-' + i" class="form-select" formControlName="measureId" required>
+                                        <option value="">Sélectionner une portion</option>
+                                        @for (m of getMeasuresForFood(food.get('foodId')?.value); track m.id) {
+                                            <option [value]="m.id">{{ m.label }}</option>
+                                        }
+                                    </select>
+                                </div>
+                                <div class="col-12 col-md-2">
+                                    <label [for]="'quantity-' + i" class="form-label">Quantité <span class="text-danger">*</span></label>
+                                    <input [id]="'quantity-' + i" type="number" class="form-control" formControlName="quantity" required min="0.1" step="0.1">
+                                </div>
+                                <div class="col-12">
+                                    <button type="button" class="btn btn-sm btn-outline-danger" (click)="removeRecipeFood(i)">Supprimer cet ingrédient</button>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+
+        <button type="button" class="btn btn-outline-primary" (click)="addNewRecipeFood()">Ajouter un ingrédient</button>
+    </fieldset>
+
+    <!-- Recipe Sub-Recipes Section -->
+    <fieldset class="mb-5 pb-4 border-bottom">
+        <legend class="h5 mb-3">Sous-recettes</legend>
+
+        <div formArrayName="recipeSubRecipes">
+            @if (recipeSubRecipesArray.length > 0) {
+                <div class="list-group mb-3">
+                    @for (subRecipe of recipeSubRecipesArray.controls; let i = $index; track subRecipe) {
+                        <div [formGroupName]="i" class="list-group-item p-3">
+                            <div class="row g-2">
+                                <div class="col-12 col-md-8">
+                                    <label [for]="'child-recipe-id-' + i" class="form-label">Recette <span class="text-danger">*</span></label>
+                                    <select [id]="'child-recipe-id-' + i" class="form-select" formControlName="childRecipeId" required>
+                                        <option value="">Sélectionner une recette</option>
+                                        @for (r of recipes(); track r.id) {
+                                            <option [value]="r.id">{{ r.name }}</option>
+                                        }
+                                    </select>
+                                </div>
+                                <div class="col-12 col-md-4">
+                                    <label [for]="'sub-recipe-quantity-' + i" class="form-label">Quantité <span class="text-danger">*</span></label>
+                                    <input [id]="'sub-recipe-quantity-' + i" type="number" class="form-control" formControlName="quantity" required min="0.1" step="0.1">
+                                </div>
+                                <div class="col-12">
+                                    <button type="button" class="btn btn-sm btn-outline-danger" (click)="removeSubRecipe(i)">Supprimer cette sous-recette</button>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+
+        <button type="button" class="btn btn-outline-primary" (click)="addNewSubRecipe()">Ajouter une sous-recette</button>
+    </fieldset>
+
+    <!-- Submit Buttons -->
+    <div class="d-flex gap-2">
+        <a class="btn btn-secondary" [routerLink]="['/recipes', id()]">Annuler</a>
+        <button type="submit" class="btn btn-primary" [disabled]="recipeForm.invalid">Enregistrer</button>
+    </div>
+</form>
 </div>
