@@ -5,6 +5,7 @@ import { NgbDropdownModule, NgbNavModule, NgbOffcanvasModule } from "@ng-bootstr
 
 import { RecipeFilterService } from "../components/recipes/recipe-filter.service";
 import { SearchFilters } from "../components/search-filters/search-filters";
+import { environment } from './../../environments/environment';
 import { Link } from "../components/utils/link/link";
 
 @Component({
@@ -26,6 +27,7 @@ export class Layout {
 
     private readonly filterService = inject(RecipeFilterService);
 
+    public readonly bgColor = environment.backgroundColor
     public readonly links = [
         { title: 'Recettes', path: 'recipes', icon: 'list_recipes.png' },
         { title: 'Ingrédients', path: 'foods', icon: 'list_food.png' },
