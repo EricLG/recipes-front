@@ -89,6 +89,7 @@ export class RecipeForm {
         servings: [1, [Validators.required, Validators.min(1)]],
         preparationTime: [''],
         kitchenTools: [''],
+        remark: [''],
         recipeFoods: this.fb.array([]),
         recipeSubRecipes: this.fb.array([]),
     });
@@ -217,6 +218,7 @@ export class RecipeForm {
             servings: data.servings,
             preparationTime: data.preparationTime,
             kitchenTools: data.kitchenTools,
+            remark: data.remark,
         } as Omit<RecipeDto, 'id'>;
 
         // Normalize recipeFoods: remove `id` property when null/undefined (REST best practice)

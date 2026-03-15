@@ -45,6 +45,13 @@
         </div>
     }
 
+    @if (recipe.remark) {
+        <div class="mb-4">
+            <h5>Remarque</h5>
+            <p class="pre-line">{{ recipe.remark }}</p>
+        </div>
+    }
+
     @if (recipe.preparationTime) {
         <div class="mb-4">
             <h5>Temps de préparation</h5>

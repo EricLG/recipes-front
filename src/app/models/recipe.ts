@@ -11,6 +11,7 @@ export interface RecipeDto {
     servings: number;
     preparationTime?: string
     kitchenTools?: string
+    remark?: string
 }
 
 export interface RecipeFoodDto {
