@@ -104,7 +104,7 @@
             <div formArrayName="recipeFoods">
                 @if (recipeFoodsArray.length > 0) {
                     <div class="list-group mb-3">
-                        @for (food of recipeFoodsArray.controls; let i = $index; track i) {
+                        @for (food of recipeFoodsArray.controls; let i = $index; track food) {
                             <div [formGroupName]="i" class="list-group-item p-3">
                                 <div class="row g-2">
                                     <div class="col-12 col-md-5">
@@ -149,7 +149,7 @@
             <div formArrayName="recipeSubRecipes">
                 @if (recipeSubRecipesArray.length > 0) {
                     <div class="list-group mb-3">
-                        @for (subRecipe of recipeSubRecipesArray.controls; let i = $index; track i) {
+                        @for (subRecipe of recipeSubRecipesArray.controls; let i = $index; track subRecipe) {
                             <div [formGroupName]="i" class="list-group-item p-3">
                                 <div class="row g-2">
                                     <div class="col-12 col-md-8">

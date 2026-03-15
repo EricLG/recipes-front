@@ -134,7 +134,7 @@
             <div formArrayName="measures">
                 @if (measuresArray.length > 0) {
                     <div class="list-group mb-3">
-                        @for (measure of measuresArray.controls; let i = $index; track i) {
+                        @for (measure of measuresArray.controls; let i = $index; track measure) {
                             <div [formGroupName]="i" class="list-group-item p-3">
                                 <div class="row g-2">
                                     <div class="col-12 col-md-6">
