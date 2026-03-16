@@ -9,7 +9,6 @@
     grid-template-columns: repeat(5, 235px);
     justify-content: center;
     gap: 1.5rem;
-    margin-top: 2rem;
 
     @media (max-width: 1600px) {
         grid-template-columns: repeat(4, 235px);
@@ -34,8 +33,7 @@
     width: 235px;
     height: 220px;
     border: none;
-    border-radius: 0.375rem;
-    background-image: url('/assets/scroll.png');
+    background-image: url('/assets/scroll_list.png'); // scroll_list.png : 235x220
     background-repeat: no-repeat;
     overflow: hidden;
 }

@@ -38,10 +38,12 @@ table {
     word-wrap: break-word;
 }
 
-.recipe-image {
+.recipe-scroll {
     border: none;
     // border-radius: 0.375rem;
-    background-image: url('/assets/scroll.png');
+    background-image: url('/assets/scroll_detail.png');
     background-repeat: no-repeat;
+    width: 260px;
+    height: 200px;
 
 }
