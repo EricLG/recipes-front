@@ -24,7 +24,11 @@ import { RecipeService } from './../recipe.service';
 export class RecipeList {
 
     public recipes$!: Observable<RecipeDto[]>;
-
+    public defaultImages = {
+        vegetarian: { url: 'assets/recipe_vege.png', alt: 'Plat végétarien'},
+        non_vegetarian: { url: 'assets/recipe_meat.png', alt: 'Plat non végétarien'},
+        flexible: { url: 'assets/recipe_flexible.png', alt: 'Plat flexible'},
+    }
     private readonly recipeService = inject(RecipeService);
     private readonly filterService = inject(RecipeFilterService);
 

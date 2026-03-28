@@ -1,49 +1,49 @@
-/* List group item improvements */
-.list-group-item {
-    transition: all 0.15s ease-in-out;
-
-    &:hover {
-        background-color: rgba(0, 0, 0, 0.02);
-        transform: translateX(2px);
-    }
-}
-
-/* Badge improvements */
-.badge {
-    font-weight: 500;
-    font-size: 0.85rem;
-    padding: 0.35em 0.65em;
-}
-
-/* Table styling */
-table {
-    &.table-hover tbody tr:hover {
-        background-color: rgba(0, 0, 0, 0.02);
-    }
-}
-
-/* Card styling */
-.card {
-    border-color: var(--bs-border-color);
-    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
-
-    .card-body {
-        padding: 1rem;
-    }
-}
-
-/* Pre-formatted text */
-.pre-line {
-    white-space: pre-wrap;
-    word-wrap: break-word;
-}
-
 .recipe-scroll {
     border: none;
-    // border-radius: 0.375rem;
     background-image: url('/assets/scroll_detail.png');
     background-repeat: no-repeat;
     width: 260px;
     height: 200px;
+    justify-content: center;
+}
 
+.top-grid {
+    display: grid;
+    grid-template-columns: 400px 1fr 1fr;
+    grid-template-rows: 4rem 1fr;
+    column-gap: 2rem;
+    row-gap: 0.5rem;
+}
+
+.div1 { grid-row: span 2; }
+.div2 { grid-column: span 2; }
+
+.bottom-grid {
+    display: grid;
+    grid-template-columns: 400px 1fr;
+    column-gap: 2rem;
+    row-gap: 1.5rem;
+}
+
+.div6 { grid-column: 1; }
+.div7 { grid-column: 2; grid-row: 1 / span 3; }
+.div8 { grid-column: 1; }
+
+
+@media (max-width: 1280px) {
+    .top-grid,
+    .bottom-grid {
+        display: flex;
+        flex-direction: column;
+    }
+}
+
+.creamy-card {
+    background-color: var(--cream-35);
+    padding: 1rem 1.5rem 1.5rem 1.5rem;
+}
+
+.pre-line {
+    white-space: pre-wrap;
+    word-wrap: break-word;
 }

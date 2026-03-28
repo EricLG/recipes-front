@@ -1,0 +1,35 @@
+// Background color
+
+.bg-green {
+    background-color: var(--green) !important;
+}
+.bg-green-light {
+    background-color: var(--green-light) !important;
+}
+.bg-cream {
+    background-color: var(--cream) !important;
+}
+.bg-cream-light {
+    background-color: var(--cream-light) !important;
+}
+.bg-cream-35 {
+    background-color: var(--cream-35);
+}
+
+// Font color
+
+.c-green {
+    color: var(--green) !important;
+}
+
+.c-brown {
+    color: var(--brown) !important;
+}
+
+.c-orange {
+    color: orange;
+}
+
+.c-red {
+    color: red;
+}
