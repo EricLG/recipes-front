@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, OnDestroy } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { of } from 'rxjs';
 import { filter, map, switchMap } from 'rxjs/operators';
@@ -21,6 +22,7 @@ const EXCELLENT = 'bi-heart-fill c-green'
     selector: 'recipe-detail',
     imports: [
         CommonModule,
+        FormsModule,
         RouterModule,
         Icon,
     ],
@@ -28,7 +30,40 @@ const EXCELLENT = 'bi-heart-fill c-green'
     styleUrls: ['./recipe-detail.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class RecipeDetail {
+export class RecipeDetail implements OnDestroy {
+
+    public wakeLock = false;
+    private wakeLockSentinel: WakeLockSentinel | null = null;
+
+    private async requestWakeLock(): Promise<void> {
+        try {
+            this.wakeLockSentinel = await navigator.wakeLock.request('screen');
+        } catch (err) {
+            console.log('Wake Lock error:', err);
+        }
+    }
+
+    private releaseWakeLock(): void {
+        if (this.wakeLockSentinel) {
+            this.wakeLockSentinel.release();
+            this.wakeLockSentinel = null;
+        }
+    }
+
+    public toggleWakeLock(event: Event): void {
+        const target = event.target as HTMLInputElement;
+
+        this.wakeLock = target.checked;
+        if (this.wakeLock) {
+            this.requestWakeLock();
+        } else {
+            this.releaseWakeLock();
+        }
+    }
+
+    ngOnDestroy(): void {
+        this.releaseWakeLock();
+    }
 
     private route = inject(ActivatedRoute);
     private svc = inject(RecipeService);
