@@ -1,23 +1,69 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, OnDestroy } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { of } from 'rxjs';
 import { filter, map, switchMap } from 'rxjs/operators';
 
+import { Icon } from '../../utils/icon/icon';
 import { RecipeCategory, RecipeSeason, seasonTranslations, recipeCategoryTranslations, recipeVegetarianStatusTranslations, RecipeVegetarianStatus } from './../../../enums/recipes.enum';
 import { NutrientsDto } from './../../../models/food';
 import { DetailedRecipeDTO } from './../../../models/recipe';
 import { RecipeService } from './../recipe.service';
 
+
+const ERROR = 'bi-x-lg c-red'
+const WARNING = 'bi-exclamation-lg c-orange'
+const GOOD = 'bi-check-lg c-green'
+const EXCELLENT = 'bi-heart-fill c-green'
+
 @Component({
     selector: 'recipe-detail',
-    imports: [CommonModule, RouterModule],
+    imports: [
+        CommonModule,
+        FormsModule,
+        RouterModule,
+        Icon,
+    ],
     templateUrl: './recipe-detail.html',
     styleUrls: ['./recipe-detail.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class RecipeDetail {
+export class RecipeDetail implements OnDestroy {
+
+    public wakeLock = false;
+    private wakeLockSentinel: WakeLockSentinel | null = null;
+
+    private async requestWakeLock(): Promise<void> {
+        try {
+            this.wakeLockSentinel = await navigator.wakeLock.request('screen');
+        } catch (err) {
+            console.log('Wake Lock error:', err);
+        }
+    }
+
+    private releaseWakeLock(): void {
+        if (this.wakeLockSentinel) {
+            this.wakeLockSentinel.release();
+            this.wakeLockSentinel = null;
+        }
+    }
+
+    public toggleWakeLock(event: Event): void {
+        const target = event.target as HTMLInputElement;
+
+        this.wakeLock = target.checked;
+        if (this.wakeLock) {
+            this.requestWakeLock();
+        } else {
+            this.releaseWakeLock();
+        }
+    }
+
+    ngOnDestroy(): void {
+        this.releaseWakeLock();
+    }
 
     private route = inject(ActivatedRoute);
     private svc = inject(RecipeService);
@@ -181,6 +227,67 @@ export class RecipeDetail {
 
     public getVegetarianStatusLabel(status: string): string {
         return recipeVegetarianStatusTranslations[status as RecipeVegetarianStatus] || status;
+    }
+
+    public servingMapping: {[k: string]: string} = {
+        '=0': 'Aucune part',
+        '=1': '1 part',
+        'other': '# parts'
+    }
+
+    // Proteins is checked for all needs of the day, for someone needing 1600 KCal by day
+    public getProteinsStatus(value: number, energyKcal: number): string {
+        const scaledValueFor1600KCal = value * 1600 / energyKcal
+
+        if (scaledValueFor1600KCal < 50) {
+            return ERROR
+        } else if (scaledValueFor1600KCal >= 50 && scaledValueFor1600KCal < 72){
+            return WARNING
+        } else if (scaledValueFor1600KCal >= 72 && scaledValueFor1600KCal < 96){
+            return GOOD
+        } else {
+            return EXCELLENT
+        }
+    }
+
+    // Fats is checked for all needs of the day, for someone needing 1600 KCal by day
+    public getFatsStatus(value: number, energyKcal: number): string {
+        const scaledValueFor1600KCal = value * 1600 / energyKcal
+
+        if (scaledValueFor1600KCal < 42) {
+            return WARNING
+        } else if (scaledValueFor1600KCal >= 42 && scaledValueFor1600KCal < 63){
+            return GOOD
+        } else if (scaledValueFor1600KCal >= 63 && scaledValueFor1600KCal < 71){
+            return WARNING
+        } else {
+            return ERROR
+        }
+    }
+
+    // Fiber is checked for all needs of the day, for someone needing 1600 KCal by day
+    public getFibersStatus(value: number, energyKcal: number): string {
+        const scaledValueFor1600KCal = value * 1600 / energyKcal
+
+        if (scaledValueFor1600KCal < 20) {
+            return WARNING
+        } else if (scaledValueFor1600KCal >= 20 && scaledValueFor1600KCal < 30){
+            return GOOD
+        } else {
+            return EXCELLENT
+        }
+    }
+
+    // Salt is checked by recipe, not taking account other meal
+    public getSaltStatus(value: number): string {
+
+        if (value < 1.5) {
+            return WARNING
+        } else if (value >= 1.5 && value < 2.5){
+            return GOOD
+        } else {
+            return ERROR
+        }
     }
 
 }
