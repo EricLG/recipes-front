@@ -9,14 +9,33 @@
 
 .top-grid {
     display: grid;
-    grid-template-columns: 400px 1fr 1fr;
-    grid-template-rows: 4rem 1fr;
+    grid-template-columns: 400px minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-rows: auto 1fr;
     column-gap: 2rem;
     row-gap: 0.5rem;
 }
 
 .div1 { grid-row: span 2; }
 .div2 { grid-column: span 2; }
+
+.recipe-heading {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: .75rem 1rem;
+}
+
+.recipe-heading h3 {
+    flex: 1 1 15rem;
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+.recipe-heading app-add-to-week {
+    flex: 0 1 auto;
+    max-width: 100%;
+}
 
 .bottom-grid {
     display: grid;

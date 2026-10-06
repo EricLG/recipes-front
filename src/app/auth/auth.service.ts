@@ -27,7 +27,7 @@ export class AuthService {
             try {
                 const user = this.decodeToken(token);
                 this.currentUserSubject.next(user);
-            } catch (error) {
+            } catch {
                 // Invalid token, clear it
                 localStorage.removeItem('auth_token');
             }
@@ -46,6 +46,10 @@ export class AuthService {
 
     public isLoggedIn(): boolean {
         return !!this.currentUserSubject.value;
+    }
+
+    public getCurrentUserEmail(): string | null {
+        return this.currentUserSubject.value?.email ?? null;
     }
 
     public isAdmin(): boolean {

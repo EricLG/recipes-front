@@ -1,0 +1,149 @@
+<div class="save-toast-container" aria-live="polite" aria-atomic="true">
+    @if (saveMessage()) {
+        <ngb-toast class="text-bg-success" [autohide]="true" [delay]="4000" [animation]="false" (hidden)="saveMessage.set('')">{{ saveMessage() }}</ngb-toast>
+    }
+    @if (importMessage()) {
+        <ngb-toast class="text-bg-info" [autohide]="true" [delay]="4000" [animation]="false" (hidden)="importMessage.set('')">{{ importMessage() }}</ngb-toast>
+    }
+</div>
+<section class="shopping-list" [class.shopping-list-purchase]="viewMode() === 'shopping'" aria-labelledby="shopping-list-title">
+    <header class="shopping-header">
+        <div><h1 id="shopping-list-title">Liste de courses</h1><p>{{ weekLabel() }}</p></div>
+        @if (viewMode() === 'prepare') {
+        <nav class="d-flex flex-wrap gap-2" aria-label="Navigation entre les semaines">
+            <button class="btn btn-outline-secondary" (click)="changeWeek(-1)" [disabled]="busy()" aria-label="Semaine précédente">←</button>
+            <button class="btn btn-outline-secondary" (click)="goWeek()" [disabled]="busy() || current()">Semaine en cours</button>
+            <button class="btn btn-outline-secondary" (click)="changeWeek(1)" [disabled]="busy() || !canNext()" aria-label="Semaine suivante">→</button>
+        </nav>
+        }
+    </header>
+    <div class="list-mode-switch d-flex gap-2 flex-wrap" role="group" aria-label="Utilisation de la liste">
+        <button type="button" class="btn" [class.btn-success]="viewMode() === 'prepare'" [class.btn-outline-success]="viewMode() !== 'prepare'" [attr.aria-pressed]="viewMode() === 'prepare'" [disabled]="busy()" (click)="setViewMode('prepare')">À la maison</button>
+        <button type="button" class="btn" [class.btn-success]="viewMode() === 'shopping'" [class.btn-outline-success]="viewMode() !== 'shopping'" [attr.aria-pressed]="viewMode() === 'shopping'" [disabled]="busy()" (click)="setViewMode('shopping')">En magasin</button>
+    </div>
+    @if (viewMode() === 'prepare') {
+    <div class="d-flex flex-wrap gap-2 mb-3">
+        <a class="btn btn-outline-success" routerLink="/weekly-plan" [queryParams]="{week: weekStart()}">Voir le planning</a>
+        @if (editable()) {
+            <button class="btn btn-outline-success" (click)="importIngredients()" [disabled]="busy() || !ready()">{{ importing() ? 'Import…' : 'Importer / Actualiser les ingrédients du planning' }}</button>
+        }
+    </div>
+    }
+    @if (!editable()) { <p class="alert alert-secondary">Cette semaine est en lecture seule.</p> }
+    @if (errorMessage() && (viewMode() === 'prepare' || !ready())) { <p class="alert alert-danger" role="alert">{{ errorMessage() }} <button class="btn btn-sm btn-outline-danger" (click)="loadShoppingList()" [disabled]="busy()">Recharger</button></p> }
+    @if (loading()) { <p role="status">Chargement…</p> } @else if (ready()) {
+        @if (viewMode() === 'shopping') {
+            <div class="purchase-toolbar">
+                <div class="purchase-stores" role="group" aria-label="Magasin visité">
+                    @for (store of stores(); track $index) {
+                        <button type="button" class="btn btn-sm" [class.btn-success]="selectedStoreIndex() === $index" [class.btn-outline-success]="selectedStoreIndex() !== $index" [attr.aria-pressed]="selectedStoreIndex() === $index" [disabled]="busy()" (click)="selectStore($index)">{{ store }}</button>
+                    }
+                </div>
+                <div class="purchase-progress">
+                    <span role="status">{{ purchaseCheckedCount() }} / {{ purchaseItems().length }} achetés</span>
+                </div>
+                @if (errorMessage()) { <p class="purchase-save-error" role="alert">{{ errorMessage() }}</p> }
+            </div>
+            <div class="purchase-list" [attr.aria-label]="'Courses chez ' + selectedStore()">
+                @for (group of purchaseGroups(); track group.category) {
+                    <section class="purchase-category">
+                        <h2>{{ group.label }}</h2>
+                        <ul>
+                            @for (item of group.items; track item.key) {
+                                <li>
+                                    <label class="purchase-row" [class.is-checked]="item.checked" [class.is-disabled]="!editable() || busy()">
+                                        <input type="checkbox" [id]="'purchase-' + item.key" [checked]="item.checked" [disabled]="!editable() || busy()" (change)="toggleIngredient(item, $event)">
+                                        <span>{{ quantityLabel(item) }}</span>
+                                    </label>
+                                </li>
+                            }
+                        </ul>
+                    </section>
+                } @empty { <p class="purchase-empty">Aucun article à acheter chez {{ selectedStore() }}.</p> }
+                @if (purchaseItems().length > 0 && purchaseCheckedCount() === purchaseItems().length) {
+                    <p class="purchase-complete" role="status">Tous les articles de ce magasin sont cochés.</p>
+                }
+            </div>
+        } @else {
+        @if (editable()) {
+            <fieldset [disabled]="busy()" class="mb-3">
+                <legend class="h5">Magasins</legend>
+                <div class="d-flex flex-wrap gap-3">
+                    @for (store of stores(); track $index) {
+                        <div><label [for]="'store-' + $index">Magasin {{ $index + 1 }}</label><input class="form-control" [id]="'store-' + $index" [value]="store" maxlength="100" (change)="renameStore(store, $event)"></div>
+                    }
+                </div>
+            </fieldset>
+            <form (ngSubmit)="addFreeItem()" class="d-flex flex-wrap gap-2 align-items-end mb-3">
+                <div class="flex-grow-1"><label for="free-item">Ajouter un article libre</label><input id="free-item" class="form-control" name="freeText" [(ngModel)]="freeText" maxlength="200" [disabled]="busy()"></div>
+                <button class="btn btn-outline-success" [disabled]="busy() || !freeText.trim()">Ajouter</button>
+            </form>
+        }
+        <h2>À acheter</h2><p>{{ checkedCount() }} / {{ shoppingItemCount() }} articles cochés</p>
+        @if (items().length === 0) { <p>Aucun article dans cette liste.</p> }
+        <div class="stores-grid">
+            @for (storeGroup of shoppingGroupsByStore(); track storeGroup.store) {
+                <section class="store-shopping-group">
+                    <h3>{{ storeGroup.store }}</h3>
+                    @for (group of storeGroup.groups; track group.category) {
+                        <h4>{{ group.label }}</h4>
+                        <ul class="ingredient-list">
+                            @for (item of group.items; track item.key) {
+                                <li class="ingredient-item" [class.is-checked]="item.checked">
+                                    <div class="d-flex gap-2 align-items-center flex-wrap">
+                                        <input type="checkbox" class="form-check-input" [id]="'item-' + item.key" [checked]="item.checked" [disabled]="!editable() || busy()" (change)="toggleIngredient(item, $event)">
+                                        <label [for]="'item-' + item.key">{{ quantityLabel(item) }}</label>
+                                        @if (changedKeys().includes(item.key)) { <span class="badge bg-warning text-dark">Quantité modifiée</span> }
+                                    </div>
+                                    @if (editable()) {
+                                        <div class="d-flex flex-wrap gap-2 mt-2">
+                                            <ng-container *ngTemplateOutlet="storeChoices; context: {$implicit: item}"></ng-container>
+                                            <button class="btn btn-sm btn-outline-secondary" (click)="moveToStock(item, true)" [disabled]="busy()">En stock</button>
+                                        </div>
+                                        @if (item.kind === 'free') { <ng-container *ngTemplateOutlet="freeEditor; context: {$implicit: item}"></ng-container> }
+                                    }
+                                </li>
+                            }
+                        </ul>
+                    }
+                </section>
+            }
+        </div>
+        <section class="stock-section">
+            <h2>En stock</h2>
+            @for (group of stockGroups(); track group.category) {
+                <h3>{{ group.label }}</h3>
+                <ul class="ingredient-list">
+                    @for (item of group.items; track item.key) {
+                        <li class="ingredient-item">
+                            <span>{{ quantityLabel(item) }}</span>
+                            @if (changedKeys().includes(item.key)) { <span class="badge bg-warning text-dark">Quantité modifiée</span> }
+                            @if (editable()) {
+                                <div class="d-flex gap-2 flex-wrap mt-2">
+                                    <ng-container *ngTemplateOutlet="storeChoices; context: {$implicit: item}"></ng-container>
+                                    <button class="btn btn-sm btn-outline-success" (click)="moveToStock(item, false)" [disabled]="busy()">À acheter</button>
+                                </div>
+                                @if (item.kind === 'free') { <ng-container *ngTemplateOutlet="freeEditor; context: {$implicit: item}"></ng-container> }
+                            }
+                        </li>
+                    }
+                </ul>
+            } @empty { <p>Aucun article indiqué en stock.</p> }
+        </section>
+        }
+    }
+    <ng-template #storeChoices let-item>
+        <div class="store-choices d-flex flex-wrap gap-2" role="group" [attr.aria-label]="'Magasin pour ' + item.name">
+            @for (store of stores(); track $index) {
+                <button type="button" class="btn btn-sm" [class.btn-success]="item.store === store" [class.btn-outline-success]="item.store !== store" [attr.aria-pressed]="item.store === store" [disabled]="busy()" (click)="assignStore(item, store)">{{ store }}</button>
+            }
+        </div>
+    </ng-template>
+    <ng-template #freeEditor let-item>
+        <div class="d-flex gap-2 mt-2">
+            <label [for]="'edit-' + item.key" class="visually-hidden">Modifier {{ item.name }}</label>
+            <input class="form-control form-control-sm" [id]="'edit-' + item.key" [value]="item.name" maxlength="200" [disabled]="busy()" (change)="editFreeItem(item, $event)">
+            <button class="btn btn-sm btn-outline-danger" [disabled]="busy()" (click)="removeFreeItem(item)" [attr.aria-label]="'Supprimer ' + item.name">Supprimer</button>
+        </div>
+    </ng-template>
+</section>

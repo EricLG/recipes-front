@@ -1,0 +1,7 @@
+@if (auth.isLoggedIn()) {
+    <button type="button" class="btn btn-outline-success" [class.btn-sm]="compact" [disabled]="busy()" (click)="add()" [title]="added() ? 'Vérifier la présence dans ma semaine' : 'Ajouter à ma semaine'" aria-label="Ajouter à ma semaine">
+        <span class="bi" [class.bi-calendar-plus]="!added()" [class.bi-calendar-check]="added()" aria-hidden="true"></span>
+        @if (!compact) { <span> {{ busy() ? 'Ajout…' : 'Ajouter à ma semaine' }}</span> }
+    </button>
+    @if (message()) { <span class="feedback" [class.compact-feedback]="compact" role="status">{{ message() }}</span> }
+}

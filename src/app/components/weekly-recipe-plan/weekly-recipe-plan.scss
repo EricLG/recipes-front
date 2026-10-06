@@ -1,0 +1,77 @@
+.weekly-plan {
+    max-width: 900px;
+    margin: 0 auto 3rem;
+}
+
+.week-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.week-header h1 {
+    margin: 0;
+    color: var(--green);
+    font-family: lydianbt, serif;
+    font-size: 1.75rem;
+}
+
+.list-group-item {
+    overflow-wrap: anywhere;
+}
+
+.list-group-item .btn {
+    min-height: 2.75rem;
+}
+
+.planned-recipe-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 1rem;
+}
+
+.planned-recipe-info {
+    display: flex;
+    flex-direction: column;
+    gap: .25rem;
+    min-width: 0;
+}
+
+.planned-recipe-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: .5rem;
+}
+
+@media (max-width: 640px) {
+    .planned-recipe-row {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .week-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .week-header h1 {
+        font-size: 1.4rem;
+    }
+}
+
+.save-toast-container {
+    position: fixed;
+    bottom: 1rem;
+    right: 1rem;
+    z-index: 1090;
+    max-width: calc(100vw - 2rem);
+    pointer-events: none;
+}
+
+.planned-recipe-servings img {
+    margin-left: .375rem;
+    vertical-align: middle;
+}
