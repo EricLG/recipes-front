@@ -5,6 +5,8 @@
     "ng": "ng",
     "start": "ng serve --configuration development --host 0.0.0.0",
     "build": "ng build",
+    "build:ia": "node --use-system-ca ./node_modules/@angular/cli/bin/ng.js build",
+    "test": "ng test --watch=false",
     "lint": "eslint --ext .ts,.js src --max-warnings=0",
     "lint:fix": "eslint --ext .ts,.js src --fix",
     "watch": "ng build --watch --configuration development"
