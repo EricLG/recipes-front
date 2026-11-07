@@ -18,7 +18,10 @@
                 </div>
 
                 <div class="div2">
-                    <h3>{{ recipe.name }}</h3>
+                    <div class="recipe-heading">
+                        <h3>{{ recipe.name }}</h3>
+                        @if (recipe.status === 'approved') { <app-add-to-week [recipeId]="recipe.id"></app-add-to-week> }
+                    </div>
                     <hr>
                 </div>
 

@@ -13,11 +13,14 @@ import { Profile } from './components/profile/profile';
 import { RecipeDetail } from './components/recipes/recipe-detail/recipe-detail';
 import { RecipeForm } from './components/recipes/recipe-form/recipe-form';
 import { RecipeList } from './components/recipes/recipe-list/recipe-list';
+import { WeeklyRecipePlan } from './components/weekly-recipe-plan/weekly-recipe-plan';
 
 export const routes: Routes = [
     { path: '', component: Home },
     { path: 'login', component: Login },
     { path: 'recipes', component: RecipeList },
+    { path: 'weekly-plan', component: WeeklyRecipePlan, canActivate: [loggedInGuard], canDeactivate: [(component: WeeklyRecipePlan) => component.canDeactivate()], runGuardsAndResolvers: 'paramsOrQueryParamsChange' },
+    { path: 'shopping-list', canActivate: [loggedInGuard], canDeactivate: [(component: { canDeactivate: () => boolean }) => component.canDeactivate()], runGuardsAndResolvers: 'paramsOrQueryParamsChange', loadComponent: () => import('./components/shopping-list/shopping-list').then(module => module.ShoppingList) },
     { path: 'recipes/add', component: RecipeForm, canActivate: [authGuard] },
     { path: 'recipes/edit/:id', component: RecipeForm, canActivate: [authGuard] },
     { path: 'recipes/:id', component: RecipeDetail },

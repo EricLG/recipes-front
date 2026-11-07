@@ -2,13 +2,15 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { RouterModule } from '@angular/router';
 
+
 import { RecipeCategory, RecipeSeason, RecipeStatus, recipeCategoryTranslations, recipeStatusTranslations, seasonTranslations } from '../../../enums/recipes.enum';
 import { RecipeDto } from '../../../models/recipe';
+import { AddToWeek } from '../add-to-week/add-to-week';
 
 @Component({
     selector: 'recipe-card',
     standalone: true,
-    imports: [CommonModule, RouterModule],
+    imports: [CommonModule, RouterModule, AddToWeek],
     templateUrl: './recipe-card.html',
     styleUrls: ['./recipe-card.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,

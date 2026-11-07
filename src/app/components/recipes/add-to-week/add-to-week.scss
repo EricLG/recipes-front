@@ -1,0 +1,15 @@
+:host { display: inline-block; }
+.feedback { display: block; font-size: .85rem; max-width: 24rem; margin-top: .25rem; }
+.btn-sm { min-width: 2.5rem; min-height: 2.5rem; }
+.compact-feedback {
+    position: absolute;
+    right: 0;
+    top: calc(100% + .25rem);
+    width: 205px;
+    padding: .5rem;
+    border: 1px solid var(--green);
+    border-radius: .25rem;
+    background: white;
+    color: var(--green);
+    z-index: 2;
+}

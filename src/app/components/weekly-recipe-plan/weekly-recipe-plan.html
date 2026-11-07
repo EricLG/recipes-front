@@ -1,0 +1,81 @@
+<div class="save-toast-container" aria-live="polite" aria-atomic="true">
+    @if (saveMessage()) {
+        <ngb-toast class="text-bg-success" [autohide]="true" [delay]="4000" [animation]="false" (hidden)="saveMessage.set('')">{{ saveMessage() }}</ngb-toast>
+    }
+</div>
+<section class="weekly-plan" aria-labelledby="weekly-plan-title">
+    <header class="week-header">
+        <div><h1 id="weekly-plan-title">Planifier ma semaine</h1><p>{{ weekLabel() }}</p></div>
+        <nav class="d-flex flex-wrap gap-2" aria-label="Navigation entre les semaines">
+            <button class="btn btn-outline-secondary" (click)="changeWeek(-1)" [disabled]="busy() || targetPending()" aria-label="Semaine précédente">←</button>
+            <button class="btn btn-outline-secondary" (click)="goWeek()" [disabled]="busy() || targetPending() || current()">Semaine en cours</button>
+            <button class="btn btn-outline-secondary" (click)="changeWeek(1)" [disabled]="busy() || targetPending() || !canNext()" aria-label="Semaine suivante">→</button>
+        </nav>
+    </header>
+    @if (plan()) { <a class="btn btn-outline-success mb-3" [class.disabled]="busy() || targetPending()" [attr.aria-disabled]="busy() || targetPending()" routerLink="/shopping-list" [queryParams]="{week: weekStart()}">Voir les courses</a> }
+    @if (errorMessage()) {
+        <p class="alert alert-danger" role="alert">{{ errorMessage() }}
+            @if (plan() && targetServings !== plan()?.targetServings) { <button type="button" class="btn btn-sm btn-outline-danger" (click)="saveTarget()" [disabled]="busy() || targetPending()">Réessayer la sauvegarde de l’objectif</button> }
+            @else { <button type="button" class="btn btn-sm btn-outline-danger" (click)="loadPlan()" [disabled]="busy()">Recharger</button> }
+        </p>
+    }
+    @if (message()) { <p class="alert alert-info" role="status">{{ message() }}</p> }
+    @if (!editable()) { <p class="alert alert-secondary">Cette semaine est en lecture seule.</p> }
+    @if (busy()) { <p role="status">Chargement…</p> }
+    @if (editable() && (plan() || notFound())) {
+        <form class="d-flex flex-wrap gap-2 align-items-end mb-3" (ngSubmit)="saveTarget()">
+            <div><label for="target-servings">Objectif de parts</label><input id="target-servings" class="form-control" name="target" type="number" min="1" step="1" pattern="^[0-9]+$" required [disabled]="busy()" [ngModel]="targetServings" (ngModelChange)="onTargetChange($event)" #target="ngModel"></div>
+            @if (!plan()) { <button class="btn btn-outline-success" [disabled]="busy() || target.invalid">Créer le planning</button> }
+            @if (plan()) { <button type="button" class="btn btn-success" [disabled]="busy() || targetPending() || targetServings !== plan()?.targetServings" (click)="complete()">Compléter automatiquement</button> }
+        </form>
+        @if (targetPending()) { <p role="status">Enregistrement automatique de l’objectif…</p> }
+        <p>Plats principaux de saison, non cuisinés les deux semaines précédentes. Ajoutez aussi vos choix depuis les <a routerLink="/recipes">recettes</a>.</p>
+    }
+    @if (plan(); as plan) {
+        <p aria-live="polite"><strong>{{ plan.totalServings }} / {{ plan.targetServings }} parts</strong> · {{ plan.shortage }} manquantes · {{ plan.surplus }} excédentaires · {{ plan.items.length }} recettes</p>
+        <ul class="list-group">
+            @for (item of plan.items; track item.recipeId) {
+                <li class="list-group-item">
+                    <div class="planned-recipe-row">
+                        <div class="planned-recipe-info">
+                            <a [routerLink]="['/recipes', item.recipeId]">{{ item.recipeName }}</a>
+                            <div class="planned-recipe-servings">
+                                <span>{{ item.servings }} parts</span>
+                                @if (vegetarianRecipeIds().has(item.recipeId)) {
+                                    <img src="assets/pictos/vege.png" width="25" height="16" alt="Recette végétarienne" title="Recette végétarienne">
+                                }
+                            </div>
+                            @if (item.cookedAt) { <span class="badge bg-success align-self-start">Cuisinée</span> }
+                        </div>
+                        <div class="planned-recipe-actions">
+                            @if (current()) { <button class="btn btn-sm btn-outline-success" [disabled]="busy() || targetPending()" (click)="setCooked(item)">{{ item.cookedAt ? 'Annuler la cuisson' : 'Marquer cuisinée' }}</button> }
+                            @if (editable()) {
+                                <button class="btn btn-sm btn-outline-secondary" [disabled]="busy() || targetPending() || !!item.cookedAt" (click)="openReplacement(item)">Remplacer</button>
+                                <button class="btn btn-sm btn-outline-danger" [disabled]="busy() || targetPending() || !!item.cookedAt" (click)="remove(item)">Supprimer</button>
+                            }
+                        </div>
+                    </div>
+                    @if (replacementFor() === item.recipeId) {
+                        <div class="mt-3">
+                            <label for="replacement">Recette de remplacement</label>
+                            <ng-select labelForId="replacement" [items]="candidates()" bindLabel="name" bindValue="_id" [(ngModel)]="replacementId" [searchable]="true" [disabled]="busy()" notFoundText="Aucune recette admissible">
+                                <ng-template ng-option-tmp let-item="item">{{ item.name }} — {{ item.servings }} parts</ng-template>
+                            </ng-select>
+                            <button class="btn btn-success mt-2" [disabled]="busy() || !replacementId" (click)="replaceRecipe()">Valider</button>
+                            <button class="btn btn-outline-secondary mt-2 ms-2" [disabled]="busy()" (click)="replacementFor.set(null)">Annuler</button>
+                        </div>
+                    }
+                </li>
+            } @empty { <li class="list-group-item">Aucune recette planifiée.</li> }
+        </ul>
+        @if (editable()) {
+            <div class="mt-3">
+                <label for="add-recipe">Ajouter une recette au planning</label>
+                <ng-select labelForId="add-recipe" [items]="availableAddRecipes()" bindLabel="name" bindValue="id" [(ngModel)]="additionId" (ngModelChange)="addRecipe($event)" (open)="loadAddRecipes()" [searchable]="true" [loading]="loadingAddRecipes()" [disabled]="busy() || targetPending()" notFoundText="Aucune recette approuvée disponible">
+                    <ng-template ng-option-tmp let-item="item">{{ item.name }} — {{ item.servings }} parts</ng-template>
+                </ng-select>
+                @if (addRecipesError()) { <p class="text-danger" role="alert">{{ addRecipesError() }} <button type="button" class="btn btn-sm btn-outline-danger" (click)="loadAddRecipes()">Réessayer</button></p> }
+            </div>
+        }
+    } @else if (!busy()) { <p>Aucun planning pour cette semaine.</p> }
+</section>

@@ -7,31 +7,14 @@ import { of } from 'rxjs';
 import { filter, map, switchMap } from 'rxjs/operators';
 
 import { AuthService } from '../../../auth/auth.service';
-import { FoodCategory, categoryTranslations } from '../../../enums/food.enum';
+import { FOOD_CATEGORY_ORDER, FoodCategory, categoryTranslations } from '../../../enums/food.enum';
 import { RecipeCategory, RecipeSeason, seasonTranslations, recipeCategoryTranslations, recipeVegetarianStatusTranslations, RecipeVegetarianStatus } from '../../../enums/recipes.enum';
 import { NutrientsDto } from '../../../models/food';
 import { DetailedRecipeDTO } from '../../../models/recipe';
 import { Icon } from '../../utils/icon/icon';
+import { AddToWeek } from '../add-to-week/add-to-week';
 import { RecipeTotalNutritionalsValues } from '../recipe-total-nutritionals-values/recipe-total-nutritionals-values';
 import { RecipeService } from '../recipe.service';
-
-// Order of food categories for displaying recipe foods
-const FOOD_CATEGORY_ORDER: FoodCategory[] = [
-    FoodCategory.STARCHES,
-    FoodCategory.ANIMAL_PROTEINS,
-    FoodCategory.SEAFOOD,
-    FoodCategory.PLANT_BASED,
-    FoodCategory.LEGUMES,
-    FoodCategory.VEGETABLES,
-    FoodCategory.FRUITS,
-    FoodCategory.FATS,
-    FoodCategory.DAIRY,
-    FoodCategory.SWEET_PRODUCTS,
-    FoodCategory.BEVERAGES,
-    FoodCategory.CONDIMENTS,
-    FoodCategory.SUPPLEMENTS,
-    FoodCategory.OTHER,
-];
 
 @Component({
     selector: 'recipe-detail',
@@ -41,6 +24,7 @@ const FOOD_CATEGORY_ORDER: FoodCategory[] = [
         RouterModule,
         Icon,
         RecipeTotalNutritionalsValues,
+        AddToWeek,
     ],
     templateUrl: './recipe-detail.html',
     styleUrls: ['./recipe-detail.scss'],

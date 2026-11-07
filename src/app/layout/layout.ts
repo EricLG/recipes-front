@@ -37,8 +37,8 @@ export class Layout {
         { title: 'Recettes', path: 'recipes', icon: 'list_recipes.png' },
         { title: 'Ingrédients', path: 'foods', icon: 'list_food.png' },
         { title: 'Valeurs nutritionnelles', path: 'nutritionnals-values', icon: 'detail_recipe_nutrients.png' },
-        { title: 'Planifier ma semaine', path: 'coming-soon', icon: 'planning_week.png' },
-        { title: 'Liste de courses', path: 'coming-soon', icon: 'shopping_list.png' },
+        { title: 'Planifier ma semaine', path: 'weekly-plan', icon: 'planning_week.png' },
+        { title: 'Liste de courses', path: 'shopping-list', icon: 'shopping_list.png' },
     ];
 
     constructor(
@@ -68,7 +68,7 @@ export class Layout {
     }
 
     public getCurrentUserEmail(): string | null {
-        return (this.authService.currentUser$ as any).value?.email || null;
+        return this.authService.getCurrentUserEmail();
     }
 
     public logout(): void {

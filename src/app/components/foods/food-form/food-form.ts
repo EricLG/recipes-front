@@ -131,7 +131,7 @@ export class FoodForm {
         const measuresPayload = measures.map(m => {
             const copy: Partial<MeasureDto> = { ...m };
             if (copy.id === null || copy.id === undefined || copy.id === '') {
-                delete (copy as any).id;
+                delete copy.id;
             }
             return copy as MeasureDto;
         });

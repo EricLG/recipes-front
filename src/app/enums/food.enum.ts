@@ -16,6 +16,23 @@ export enum FoodCategory {
     SUPPLEMENTS = 'supplements',
 }
 
+export const FOOD_CATEGORY_ORDER: FoodCategory[] = [
+    FoodCategory.STARCHES,
+    FoodCategory.ANIMAL_PROTEINS,
+    FoodCategory.SEAFOOD,
+    FoodCategory.PLANT_BASED,
+    FoodCategory.LEGUMES,
+    FoodCategory.VEGETABLES,
+    FoodCategory.FRUITS,
+    FoodCategory.FATS,
+    FoodCategory.DAIRY,
+    FoodCategory.SWEET_PRODUCTS,
+    FoodCategory.BEVERAGES,
+    FoodCategory.CONDIMENTS,
+    FoodCategory.SUPPLEMENTS,
+    FoodCategory.OTHER,
+];
+
 export const categoryTranslations: Record<FoodCategory, string> = {
     vegetables: "Légumes",
     fruits: "Fruits",

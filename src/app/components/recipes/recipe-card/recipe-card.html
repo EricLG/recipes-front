@@ -35,4 +35,5 @@
             </div>
         </div>
     </a>
+    @if (recipe.status === 'approved') { <div class="week-add-action"><app-add-to-week [recipeId]="recipe.id" [compact]="true"></app-add-to-week></div> }
 </div>
