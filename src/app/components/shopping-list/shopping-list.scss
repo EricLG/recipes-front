@@ -25,6 +25,21 @@
     gap: 1.5rem;
 }
 
+.ingredient-food-choice {
+    flex: 2 1 16rem;
+    min-width: 0;
+}
+
+.ingredient-measure-choice {
+    flex: 1 1 10rem;
+    min-width: 0;
+}
+
+.quantity-input {
+    width: 8rem;
+    max-width: 100%;
+}
+
 .store-shopping-group,
 .ingredient-item > div {
     min-width: 0;
@@ -62,7 +77,7 @@
     cursor: pointer;
 }
 
-.ingredient-item.is-checked label:not(.visually-hidden) {
+.ingredient-item.is-checked label[for^="item-"] {
     color: #5c5c54;
     text-decoration: line-through;
 }

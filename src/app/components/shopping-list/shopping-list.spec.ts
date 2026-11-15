@@ -11,6 +11,7 @@ import { routes } from '../../app.routes';
 import { FoodCategory } from '../../enums/food.enum';
 import { RecipeCategory, RecipeStatus, RecipeVegetarianStatus } from '../../enums/recipes.enum';
 import { DetailedRecipeDTO } from '../../models/recipe';
+import { FoodService } from '../foods/food.service';
 import { RecipeService } from '../recipes/recipe.service';
 import { WeeklyRecipePlanService } from '../weekly-recipe-plan/weekly-recipe-plan.service';
 
@@ -58,6 +59,15 @@ describe('ShoppingList', () => {
     const api = { getRemoteList: vi.fn(), getPreferences: vi.fn(), replaceRemoteList: vi.fn() };
     const plans = { getByWeekStart: vi.fn() };
     const recipes = { getDetailRecipe: vi.fn() };
+    const foods = { getAll: vi.fn(), getByIdWithMeasures: vi.fn() };
+    const apple = { ...detailRecipe().recipeFoods[0].food, id: 'apple', name: 'Pomme', category: FoodCategory.FRUITS };
+    const appleDetails = {
+        ...apple,
+        measures: [
+            { id: 'gram', foodId: apple.id, label: 'g', grams: 1, isDefault: false },
+            { id: 'piece', foodId: apple.id, label: 'unité', grams: 150, isDefault: true },
+        ],
+    };
     let week: string;
 
     beforeEach(() => {
@@ -69,6 +79,8 @@ describe('ShoppingList', () => {
         api.replaceRemoteList.mockImplementation((date, body) => of({ weekStart: date, ...body }));
         plans.getByWeekStart.mockReturnValue(of({ items: [{ recipeId: 'recipe-1', servings: 4 }] }));
         recipes.getDetailRecipe.mockReturnValue(of(detailRecipe()));
+        foods.getAll.mockReturnValue(of([apple, detailRecipe().recipeFoods[0].food]));
+        foods.getByIdWithMeasures.mockReturnValue(of(appleDetails));
     });
     afterEach(() => {
         vi.useRealTimers(); vi.restoreAllMocks();
@@ -81,6 +93,7 @@ describe('ShoppingList', () => {
                 { provide: ActivatedRoute, useValue: { queryParamMap: of(convertToParamMap({ week })) } },
                 { provide: WeeklyRecipePlanService, useValue: plans },
                 { provide: RecipeService, useValue: recipes },
+                { provide: FoodService, useValue: foods },
             ],
         });
         const service = TestBed.inject(ShoppingListService);
@@ -112,6 +125,120 @@ describe('ShoppingList', () => {
         expect(api.replaceRemoteList).toHaveBeenCalledWith(week, { stores: ['Marché', 'Bio'], items: [] });
         expect(component.exists()).toBe(true);
         expect(plans.getByWeekStart).not.toHaveBeenCalled();
+    });
+
+    it('adds a catalog ingredient in its category and persists its measure and provenance', async () => {
+        const { component, fixture } = create();
+        expect(foods.getAll).not.toHaveBeenCalled();
+        component.loadFoods();
+        component.selectFood('apple');
+        expect(component.selectedMeasureId).toBe('piece');
+        component.ingredientQuantity = 2.5;
+        fixture.detectChanges(); await Promise.resolve(); fixture.detectChanges();
+        const button = fixture.nativeElement.querySelector('.add-ingredient-form button') as HTMLButtonElement;
+        expect(button.disabled).toBe(false);
+        button.click(); fixture.detectChanges();
+        expect(component.items()).toEqual([expect.objectContaining({ key: 'apple:piece', kind: 'ingredient', foodId: 'apple', name: 'Pomme', category: FoodCategory.FRUITS, quantity: 2.5, unit: 'unité', source: 'manual', store: 'Marché', checked: false, inStock: false })]);
+        expect(fixture.nativeElement.querySelector('.store-shopping-group h4')?.textContent).toBe('Fruits');
+        expect(component.availableFoods().map(food => food.id)).not.toContain('apple');
+        expect(component.selectedFoodId).toBeNull();
+        expect(plans.getByWeekStart).not.toHaveBeenCalled();
+        vi.advanceTimersByTime(3000);
+        expect(api.replaceRemoteList.mock.calls[0][1].items[0]).toMatchObject({ itemKey: 'apple:piece', source: 'manual', quantity: 2.5 });
+        // Reload the saved snapshot to verify that manual provenance survives a GET.
+        api.getRemoteList.mockReturnValue(of({ weekStart: week, ...api.replaceRemoteList.mock.calls[0][1] }));
+        component.loadShoppingList();
+        expect(component.items()[0].source).toBe('manual');
+    });
+
+    it('excludes catalog foods already present in any measure, store or stock state and rejects duplicates', () => {
+        const { component } = create();
+        component.loadFoods(); component.selectFood('apple'); component.addIngredient();
+        const existing = component.items()[0];
+        component.assignStore(existing, 'Bio'); component.moveToStock(component.items()[0], true);
+        expect(component.availableFoods().map(food => food.id)).toEqual(['potato']);
+        component.selectFood('apple');
+        expect(component.selectedFood()).toBeNull();
+        expect(foods.getByIdWithMeasures).toHaveBeenCalledTimes(1);
+        component.selectedFood.set(appleDetails); component.selectedMeasureId = 'gram'; component.addIngredient();
+        expect(component.items()).toHaveLength(1);
+        component.removeManualIngredient(component.items()[0]);
+        expect(component.availableFoods().map(food => food.id)).toContain('apple');
+    });
+
+    it('retries catalog and measure failures, handles missing measures and ignores stale selections', () => {
+        const { component } = create();
+        foods.getAll.mockReturnValueOnce(throwError(() => new HttpErrorResponse({ status: 0 })));
+        component.loadFoods();
+        expect(component.ingredientError()).toBeTruthy();
+        component.loadFoods();
+        foods.getByIdWithMeasures.mockReturnValueOnce(throwError(() => new HttpErrorResponse({ status: 500 })));
+        component.selectFood('apple');
+        expect(component.loadingFoodDetails()).toBe(false);
+        expect(component.ingredientError()).toBeTruthy();
+        foods.getByIdWithMeasures.mockReturnValueOnce(of({ ...apple, measures: [] }));
+        component.selectFood('apple'); component.addIngredient();
+        expect(component.items()).toEqual([]);
+        expect(component.ingredientError()).toContain('aucune mesure');
+        const pending = new Subject<typeof appleDetails>();
+        foods.getByIdWithMeasures.mockReturnValueOnce(pending);
+        component.selectFood('apple'); component.selectFood(null);
+        pending.next(appleDetails); pending.complete();
+        expect(component.selectedFood()).toBeNull();
+        expect(component.loadingFoodDetails()).toBe(false);
+        component.selectFood('apple'); component.addIngredient();
+        expect(component.items()).toHaveLength(1);
+    });
+
+    it('edits decimal quantities in shopping and stock rows and saves without changing their keys or stores', () => {
+        const { component, fixture } = create();
+        component.importIngredients();
+        const original = component.items()[0];
+        component.assignStore(original, 'Bio');
+        component.toggleIngredient(component.items()[0], { target: { checked: true } } as unknown as Event);
+        fixture.detectChanges();
+        const input = fixture.nativeElement.querySelector('.ingredient-item .quantity-input') as HTMLInputElement;
+        input.value = '125.5'; input.dispatchEvent(new Event('change'));
+        expect(component.items()[0]).toMatchObject({ key: original.key, foodId: original.foodId, unit: 'g', quantity: 125.5, checked: false, store: 'Bio', inStock: false });
+        component.moveToStock(component.items()[0], true); fixture.detectChanges();
+        const stockInput = fixture.nativeElement.querySelector('.stock-section .quantity-input') as HTMLInputElement;
+        stockInput.value = '42'; stockInput.dispatchEvent(new Event('change'));
+        vi.advanceTimersByTime(3000);
+        expect(api.replaceRemoteList.mock.calls.at(-1)?.[1].items[0]).toMatchObject({ quantity: 42, inStock: true, store: 'Bio' });
+        component.importIngredients();
+        expect(component.items()[0]).toMatchObject({ quantity: 100, inStock: true, store: 'Bio' });
+    });
+
+    it.each(['', '0', '-1', '1e999'])('rejects an invalid quantity %s and restores the previous value', value => {
+        const { component, fixture } = create(); component.importIngredients(); fixture.detectChanges();
+        const calls = api.replaceRemoteList.mock.calls.length;
+        const input = fixture.nativeElement.querySelector('.ingredient-item .quantity-input') as HTMLInputElement;
+        input.value = value; input.dispatchEvent(new Event('change'));
+        expect(input.value).toBe('100');
+        expect(component.items()[0].quantity).toBe(100);
+        expect(component.errorMessage()).toContain('strictement positif');
+        vi.advanceTimersByTime(3000);
+        expect(api.replaceRemoteList).toHaveBeenCalledTimes(calls);
+    });
+
+    it('preserves manual additions across imports and forbids ingredient editing in shopping mode or past weeks', () => {
+        const { component, fixture } = create();
+        component.loadFoods(); component.selectFood('apple'); component.addIngredient();
+        component.importIngredients();
+        expect(component.items().find(item => item.foodId === 'apple')).toMatchObject({ source: 'manual', quantity: 1 });
+        const original = component.items();
+        const quantityEvent = { target: { valueAsNumber: 50 } } as unknown as Event;
+        component.setViewMode('shopping'); fixture.detectChanges();
+        expect(fixture.nativeElement.querySelector('.add-ingredient-form')).toBeNull();
+        expect(fixture.nativeElement.querySelector('.quantity-input')).toBeNull();
+        component.editQuantity(original[0], quantityEvent);
+        component.removeManualIngredient(original.find(item => item.source === 'manual')!);
+        component.selectFood('potato'); component.addIngredient();
+        expect(component.items()).toEqual(original);
+        component.setViewMode('prepare'); component.weekStart.set('2026-10-12'); fixture.detectChanges();
+        expect(fixture.nativeElement.querySelector('.quantity-input')).toBeNull();
+        component.editQuantity(original[0], quantityEvent); component.addIngredient();
+        expect(component.items()).toEqual(original);
     });
 
     it('displays recipe units and operates on different measures of the same food independently', () => {

@@ -74,6 +74,26 @@
                     }
                 </div>
             </fieldset>
+            <form (ngSubmit)="addIngredient()" class="add-ingredient-form d-flex flex-wrap gap-2 align-items-end mb-3" #ingredientForm="ngForm">
+                <div class="ingredient-food-choice">
+                    <label for="ingredient-food">Ajouter un ingrédient existant</label>
+                    <ng-select labelForId="ingredient-food" name="ingredientFood" [items]="availableFoods()" bindLabel="name" bindValue="id" [ngModel]="selectedFoodId" (ngModelChange)="selectFood($event)" (open)="loadFoods()" [loading]="loadingFoods()" [disabled]="busy()" [searchable]="true" notFoundText="Aucun aliment disponible"></ng-select>
+                </div>
+                <div class="ingredient-measure-choice">
+                    <label for="ingredient-measure">Mesure</label>
+                    <ng-select labelForId="ingredient-measure" name="ingredientMeasure" [items]="selectedFood()?.measures ?? []" bindLabel="label" bindValue="id" [(ngModel)]="selectedMeasureId" [loading]="loadingFoodDetails()" [disabled]="busy() || loadingFoodDetails() || !selectedFood()" [clearable]="false" notFoundText="Aucune mesure disponible"></ng-select>
+                </div>
+                <div>
+                    <label for="ingredient-quantity">Quantité</label>
+                    <input id="ingredient-quantity" class="form-control quantity-input" name="ingredientQuantity" type="number" min="0" step="any" required [(ngModel)]="ingredientQuantity" [disabled]="busy()">
+                </div>
+                <button class="btn btn-outline-success" [disabled]="busy() || loadingFoodDetails() || !selectedFood() || !selectedMeasureId || ingredientForm.invalid || ingredientQuantity == null || ingredientQuantity <= 0">Ajouter l’ingrédient</button>
+            </form>
+            @if (ingredientError()) {
+                <p class="text-danger" role="alert">{{ ingredientError() }}
+                    <button type="button" class="btn btn-sm btn-outline-danger" [disabled]="busy() || loadingFoods() || loadingFoodDetails()" (click)="selectedFoodId ? selectFood(selectedFoodId) : loadFoods()">Réessayer</button>
+                </p>
+            }
             <form (ngSubmit)="addFreeItem()" class="d-flex flex-wrap gap-2 align-items-end mb-3">
                 <div class="flex-grow-1"><label for="free-item">Ajouter un article libre</label><input id="free-item" class="form-control" name="freeText" [(ngModel)]="freeText" maxlength="200" [disabled]="busy()"></div>
                 <button class="btn btn-outline-success" [disabled]="busy() || !freeText.trim()">Ajouter</button>
@@ -101,6 +121,7 @@
                                             <button class="btn btn-sm btn-outline-secondary" (click)="moveToStock(item, true)" [disabled]="busy()">En stock</button>
                                         </div>
                                         @if (item.kind === 'free') { <ng-container *ngTemplateOutlet="freeEditor; context: {$implicit: item}"></ng-container> }
+                                        @else { <ng-container *ngTemplateOutlet="quantityEditor; context: {$implicit: item}"></ng-container> }
                                     }
                                 </li>
                             }
@@ -124,6 +145,7 @@
                                     <button class="btn btn-sm btn-outline-success" (click)="moveToStock(item, false)" [disabled]="busy()">À acheter</button>
                                 </div>
                                 @if (item.kind === 'free') { <ng-container *ngTemplateOutlet="freeEditor; context: {$implicit: item}"></ng-container> }
+                                @else { <ng-container *ngTemplateOutlet="quantityEditor; context: {$implicit: item}"></ng-container> }
                             }
                         </li>
                     }
@@ -137,6 +159,14 @@
             @for (store of stores(); track $index) {
                 <button type="button" class="btn btn-sm" [class.btn-success]="item.store === store" [class.btn-outline-success]="item.store !== store" [attr.aria-pressed]="item.store === store" [disabled]="busy()" (click)="assignStore(item, store)">{{ store }}</button>
             }
+        </div>
+    </ng-template>
+    <ng-template #quantityEditor let-item>
+        <div class="d-flex flex-wrap gap-2 align-items-center mt-2">
+            <label [for]="'quantity-' + item.key">Quantité <span class="visually-hidden">pour {{ item.name }}</span></label>
+            <input class="form-control form-control-sm quantity-input" [id]="'quantity-' + item.key" type="number" min="0" step="any" required [value]="item.quantity" [disabled]="busy()" (change)="editQuantity(item, $event)">
+            <span>{{ item.unit }}</span>
+            @if (item.source === 'manual') { <button type="button" class="btn btn-sm btn-outline-danger" [disabled]="busy()" (click)="removeManualIngredient(item)" [attr.aria-label]="'Supprimer ' + item.name">Supprimer</button> }
         </div>
     </ng-template>
     <ng-template #freeEditor let-item>

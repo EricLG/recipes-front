@@ -12,6 +12,7 @@ export interface ShoppingListItem {
     category?: FoodCategory;
     quantity?: number;
     unit?: string;
+    source?: 'plan' | 'manual';
     checked: boolean;
     inStock: boolean;
     store: string;
@@ -30,6 +31,7 @@ export interface ShoppingListApiItem {
     category?: FoodCategory;
     quantity?: number;
     unit?: string;
+    source?: 'plan' | 'manual';
     checked: boolean;
     inStock: boolean;
     store: string;
@@ -82,9 +84,10 @@ export class ShoppingListService {
             if (quantityChanged) {
                 changed++; changedKeys.push(ingredient.key);
             }
-            return { ...ingredient, checked: quantityChanged ? false : previous.checked, inStock: previous.inStock, store: previous.store };
+            return { ...ingredient, ...(previous.source !== undefined ? { source: previous.source } : {}), checked: quantityChanged ? false : previous.checked, inStock: previous.inStock, store: previous.store };
         });
-        return { items: [...items, ...existing.filter(item => item.kind === 'free')], added, changed, removed: old.size, changedKeys };
+        const manual = [...old.values()].filter(item => item.source === 'manual');
+        return { items: [...items, ...manual, ...existing.filter(item => item.kind === 'free')], added, changed, removed: old.size - manual.length, changedKeys };
     }
 
     public aggregateIngredients(entries: PlannedRecipeIngredients[]): Omit<ShoppingListItem, 'checked' | 'inStock' | 'store'>[] {

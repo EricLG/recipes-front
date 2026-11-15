@@ -3,7 +3,7 @@ import { HttpTestingController, provideHttpClientTesting } from '@angular/common
 import { TestBed } from '@angular/core/testing';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
-import { ReplaceShoppingListRequest, ShoppingListResponse, ShoppingListService } from './shopping-list.service';
+import { ReplaceShoppingListRequest, ShoppingListItem, ShoppingListResponse, ShoppingListService } from './shopping-list.service';
 import { FoodCategory } from '../../enums/food.enum';
 import { RecipeCategory, RecipeStatus, RecipeVegetarianStatus } from '../../enums/recipes.enum';
 import { DetailedRecipeDTO } from '../../models/recipe';
@@ -88,6 +88,7 @@ describe('ShoppingListService', () => {
                     category: FoodCategory.STARCHES,
                     quantity: 500,
                     unit: 'g',
+                    source: 'manual',
                     checked: false,
                     inStock: false,
                     store: 'Super U',
@@ -149,6 +150,26 @@ describe('ShoppingListService', () => {
         expect(result.items[0]).toMatchObject({ checked: false, store: 'Biocoop', quantity: 200 });
         expect(result.changed).toBe(1);
         expect(service.mergeIngredients(existing, [], 'Super U').removed).toBe(1);
+    });
+
+    it('preserves manual ingredients and free items when the plan no longer needs them', () => {
+        const [ingredient] = service.aggregateIngredients([{ recipe: detailRecipe(), servings: 4 }]);
+        const manual: ShoppingListItem = { ...ingredient, source: 'manual', checked: false, inStock: true, store: 'Biocoop' };
+        const planned: ShoppingListItem = { ...ingredient, key: 'other:gram', foodId: 'other', checked: true, inStock: false, store: 'Super U' };
+        const free: ShoppingListItem = { key: 'free:1', kind: 'free', name: 'Piles', checked: false, inStock: false, store: 'Super U' };
+        const result = service.mergeIngredients([manual, planned, free], [], 'Super U');
+        expect(result.items).toEqual([manual, free]);
+        expect(result).toMatchObject({ added: 0, changed: 0, removed: 1 });
+    });
+
+    it('restores planning quantities without duplicating a matching manual ingredient', () => {
+        const ingredients = service.aggregateIngredients([{ recipe: detailRecipe(), servings: 4 }]);
+        const manual: ShoppingListItem = { ...ingredients[0], source: 'manual', quantity: 42, checked: true, inStock: false, store: 'Biocoop' };
+        const result = service.mergeIngredients([manual], ingredients, 'Super U');
+        expect(result.items).toEqual([{ ...manual, quantity: 100, checked: false }]);
+        expect(result).toMatchObject({ added: 0, changed: 1, removed: 0, changedKeys: [manual.key] });
+        expect(service.mergeIngredients(result.items, ingredients, 'Super U')).toMatchObject({ added: 0, changed: 0, removed: 0 });
+        expect(service.mergeIngredients(result.items, [], 'Super U').items).toEqual(result.items);
     });
 
 });
