@@ -1,22 +1,25 @@
 import { CommonModule } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
-import { ChangeDetectionStrategy, Component, computed, HostListener, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, DestroyRef, HostListener, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { NgbToast } from '@ng-bootstrap/ng-bootstrap';
+import { NgSelectModule } from '@ng-select/ng-select';
 import { EMPTY, forkJoin, of, Subject, timer } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 
 import { ShoppingListItem, ShoppingListResponse, ShoppingListService } from './shopping-list.service';
 import { FOOD_CATEGORY_ORDER, FoodCategory, categoryTranslations } from '../../enums/food.enum';
+import { FoodDto, FoodWithMeasuresDto } from '../../models/food';
 import { currentWeek, shiftWeek, validWeek, weekLabel } from '../../utils/week';
+import { FoodService } from '../foods/food.service';
 import { RecipeService } from '../recipes/recipe.service';
 import { WeeklyRecipePlanService } from '../weekly-recipe-plan/weekly-recipe-plan.service';
 
 @Component({
     selector: 'shopping-list',
-    imports: [CommonModule, FormsModule, RouterModule, NgbToast],
+    imports: [CommonModule, FormsModule, RouterModule, NgbToast, NgSelectModule],
     templateUrl: './shopping-list.html',
     styleUrl: './shopping-list.scss',
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -26,6 +29,8 @@ export class ShoppingList {
     private readonly planService = inject(WeeklyRecipePlanService);
     private readonly recipeService = inject(RecipeService);
     private readonly service = inject(ShoppingListService);
+    private readonly foodService = inject(FoodService);
+    private readonly destroyRef = inject(DestroyRef);
     private readonly route = inject(ActivatedRoute);
     private readonly router = inject(Router);
     public readonly weekStart = signal(currentWeek());
@@ -57,6 +62,20 @@ export class ShoppingList {
     public readonly shoppingGroupsByStore = computed(() => this.stores().map(store => ({ store, groups: this.groupItems(this.items().filter(item => !item.inStock && item.store === store)) })));
     public readonly stockGroups = computed(() => this.groupItems(this.items().filter(item => item.inStock)));
     public freeText = '';
+    public readonly foods = signal<FoodDto[]>([]);
+    public readonly availableFoods = computed(() => {
+        const present = new Set(this.items().filter(item => item.kind === 'ingredient').map(item => item.foodId));
+        return this.foods().filter(food => !present.has(food.id));
+    });
+    public readonly loadingFoods = signal(false);
+    public readonly loadingFoodDetails = signal(false);
+    public readonly ingredientError = signal('');
+    public readonly selectedFood = signal<FoodWithMeasuresDto | null>(null);
+    public selectedFoodId: string | null = null;
+    public selectedMeasureId: string | null = null;
+    public ingredientQuantity: number | null = 1;
+    private foodsLoaded = false;
+    private foodSelectionVersion = 0;
     private readonly autoSave = new Subject<number | null>();
 
     constructor() {
@@ -114,6 +133,7 @@ export class ShoppingList {
         this.importMessage.set('');
         this.changedKeys.set([]);
         this.freeText = '';
+        this.resetIngredientForm();
         this.service.getRemoteList(this.weekStart()).subscribe({
             next: response => {
                 this.showRemoteList(response); this.loading.set(false);
@@ -149,6 +169,7 @@ export class ShoppingList {
             category: item.category,
             quantity: item.quantity,
             unit: item.unit,
+            source: item.source,
             checked: item.checked,
             inStock: item.inStock,
             store: item.store,
@@ -197,6 +218,96 @@ export class ShoppingList {
         this.markDirty();
     }
 
+    public loadFoods(): void {
+        if (this.foodsLoaded || this.loadingFoods() || !this.canEditIngredients()) return;
+        this.loadingFoods.set(true);
+        this.ingredientError.set('');
+        this.foodService.getAll().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+            next: foods => {
+                this.foods.set([...foods].sort((a, b) => a.name.localeCompare(b.name, 'fr')));
+                this.foodsLoaded = true;
+                this.loadingFoods.set(false);
+            },
+            error: error => {
+                this.loadingFoods.set(false);
+                this.ingredientError.set(this.describeError(error));
+            },
+        });
+    }
+
+    public selectFood(foodId: string | null): void {
+        if (!this.canEditIngredients()) return;
+        this.resetIngredientForm();
+        if (!foodId || !this.availableFoods().some(food => food.id === foodId)) return;
+        this.selectedFoodId = foodId;
+        const version = this.foodSelectionVersion;
+        this.loadingFoodDetails.set(true);
+        this.foodService.getByIdWithMeasures(foodId).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+            next: food => {
+                if (version !== this.foodSelectionVersion) return;
+                this.selectedFood.set(food);
+                this.selectedMeasureId = (food.measures.find(measure => measure.isDefault) ?? food.measures[0])?.id ?? null;
+                this.loadingFoodDetails.set(false);
+                if (!food.measures.length) this.ingredientError.set('Cet aliment ne possède aucune mesure disponible.');
+            },
+            error: error => {
+                if (version !== this.foodSelectionVersion) return;
+                this.loadingFoodDetails.set(false);
+                this.ingredientError.set(this.describeError(error));
+            },
+        });
+    }
+
+    public addIngredient(): void {
+        if (!this.canEditIngredients() || this.loadingFoodDetails()) return;
+        const food = this.selectedFood();
+        const measure = food?.measures.find(entry => entry.id === this.selectedMeasureId);
+        const quantity = this.ingredientQuantity;
+        if (!food || !measure || quantity == null || !Number.isFinite(quantity) || quantity <= 0) return;
+        if (this.items().some(item => item.kind === 'ingredient' && item.foodId === food.id)) {
+            this.ingredientError.set('Cet ingrédient est déjà présent dans la liste.');
+            return;
+        }
+        this.items.update(items => [
+            ...items,
+            { key: `${food.id}:${measure.id}`, kind: 'ingredient', foodId: food.id, name: food.name, category: food.category, quantity, unit: measure.label, source: 'manual', checked: false, inStock: false, store: this.stores()[0] },
+        ]);
+        this.resetIngredientForm();
+        this.markDirty();
+    }
+
+    public editQuantity(item: ShoppingListItem, event: Event): void {
+        if (!this.canEditIngredients() || item.kind !== 'ingredient') return;
+        const input = event.target as HTMLInputElement;
+        const quantity = input.valueAsNumber;
+        if (!Number.isFinite(quantity) || quantity <= 0) {
+            input.value = String(item.quantity);
+            this.errorMessage.set('La quantité doit être un nombre strictement positif.');
+            return;
+        }
+        if (quantity !== item.quantity) this.updateItem(item, { quantity, checked: false });
+    }
+
+    public removeManualIngredient(item: ShoppingListItem): void {
+        if (!this.canEditIngredients() || item.kind !== 'ingredient' || item.source !== 'manual') return;
+        this.items.update(items => items.filter(entry => entry.key !== item.key));
+        this.markDirty();
+    }
+
+    private canEditIngredients(): boolean {
+        return this.viewMode() === 'prepare' && this.editable() && this.ready() && !this.busy();
+    }
+
+    private resetIngredientForm(): void {
+        this.foodSelectionVersion++;
+        this.selectedFoodId = null;
+        this.selectedMeasureId = null;
+        this.selectedFood.set(null);
+        this.ingredientQuantity = 1;
+        this.loadingFoodDetails.set(false);
+        this.ingredientError.set('');
+    }
+
     public editFreeItem(item: ShoppingListItem, event: Event): void {
         if (this.viewMode() !== 'prepare') return;
         const name = (event.target as HTMLInputElement).value.trim();
@@ -243,7 +354,7 @@ export class ShoppingList {
         this.ready.set(true);
         this.exists.set(true);
         this.stores.set([...response.stores]);
-        this.items.set(response.items.map(item => ({ key: item.itemKey, kind: item.kind, foodId: item.foodId, name: item.foodName, category: item.category, quantity: item.quantity, unit: item.unit, checked: item.checked, inStock: item.inStock, store: item.store })));
+        this.items.set(response.items.map(item => ({ key: item.itemKey, kind: item.kind, foodId: item.foodId, name: item.foodName, category: item.category, quantity: item.quantity, unit: item.unit, source: item.source, checked: item.checked, inStock: item.inStock, store: item.store })));
         this.dirty.set(false);
     }
     private updateItem(item: ShoppingListItem, changes: Partial<ShoppingListItem>): void {

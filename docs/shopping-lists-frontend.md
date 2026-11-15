@@ -86,6 +86,37 @@ conserver stock/magasin et signaler la ligne. Retirer les ingrédients inutiles 
 afficher le bilan dans un toast ng-bootstrap pendant 4 secondes.
 Un chargement de recette échoué laisse la liste intacte.
 
+### Ajout d'ingrédients et quantités
+
+En vue **À la maison**, un sélecteur recherchable permet de choisir un aliment
+existant absent de toute la liste (y compris les ingrédients cochés ou en stock),
+puis une de ses mesures et une quantité finie strictement positive. La mesure par
+défaut est présélectionnée. L'article conserve la clé `foodId:measureId`, son nom,
+sa catégorie et le libellé de la mesure ; il est classé dans sa catégorie, affecté
+au premier magasin, non coché et hors stock. Aucun aliment ou mesure n'est créé.
+Un aliment sans mesure ne peut pas être ajouté. Un ingrédient ajouté manuellement
+peut être supprimé depuis cette vue.
+
+Chaque ingrédient à acheter ou en stock dispose d'un champ quantité, dans sa
+mesure actuelle. Un changement valide conserve clé, mesure, catégorie, magasin et
+stock, mais réinitialise la coche d'achat. Une valeur vide, nulle, négative ou non
+finie est refusée et la quantité précédente est rétablie. Aucune édition en vue
+**En magasin**, pendant une opération ou sur une semaine passée.
+
+Le snapshot s'étend d'un champ optionnel réservé aux ingrédients :
+`source: 'plan' | 'manual'`. Sans ce champ, un ingrédient est issu du planning,
+comme avant. Un ajout manuel porte `source: 'manual'`. Ce champ est transmis par
+PUT et renvoyé par GET. Les articles libres ne l'utilisent pas.
+
+Les imports conservent les ajouts manuels mais reprennent les quantités du planning
+pour toutes les clés importées, même après une modification manuelle. Si un besoin
+du planning partage la clé d'un ajout manuel, une seule ligne est conservée avec
+la quantité importée et la provenance manuelle, sans cumul. Un ingrédient du planning
+disparaît quand il n'est plus nécessaire au planning. Des mesures
+différentes restent des lignes indépendantes. Les ajouts, suppressions manuelles
+et éditions de quantité utilisent le délai de sauvegarde déjà existant (3 secondes),
+le même PUT complet et les mêmes protections contre la perte de modifications.
+
 Exactement deux magasins renommables, sans ajout/suppression. Nouveaux articles
 affectés au premier. Les noms sauvegardés servent de préférences aux nouvelles
 listes ; les anciennes conservent leur snapshot. Les états stock/achat sont

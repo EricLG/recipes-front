@@ -31,6 +31,7 @@ export class WeeklyRecipePlan {
     private readonly targetChanges = new Subject<void>();
     public readonly weekStart = signal(currentWeek());
     public readonly vegetarianRecipeIds = signal<Set<string>>(new Set());
+    public readonly preparationTimes = signal<Map<string, number>>(new Map());
     public readonly plan = signal<WeeklyRecipePlanDto | null>(null);
     public readonly busy = signal(false);
     public readonly errorMessage = signal('');
@@ -97,6 +98,7 @@ export class WeeklyRecipePlan {
         this.saveMessage.set('');
         this.plan.set(null);
         this.vegetarianRecipeIds.set(new Set());
+        this.preparationTimes.set(new Map());
         this.notFound.set(false);
         this.targetPending.set(false);
         this.targetChanges.next();
@@ -207,12 +209,19 @@ export class WeeklyRecipePlan {
     private showPlan(plan: WeeklyRecipePlanDto): void {
         this.plan.set(plan);
         this.vegetarianRecipeIds.set(new Set());
+        this.preparationTimes.set(new Map());
         if (!plan.items.length) return;
         forkJoin(plan.items.map(item => this.recipeService.getDetailRecipe(item.recipeId).pipe(
             catchError(() => of(null)),
         ))).subscribe(recipes => {
             if (this.plan() !== plan) return;
             this.vegetarianRecipeIds.set(new Set(plan.items.filter((_, index) => recipes[index]?.vegetarianStatus === RecipeVegetarianStatus.VEGETARIAN).map(item => item.recipeId)));
+            const times = new Map<string, number>();
+            plan.items.forEach((item, index) => {
+                const time = recipes[index]?.preparationTime;
+                if (time != null) times.set(item.recipeId, time);
+            });
+            this.preparationTimes.set(times);
         });
     }
 
