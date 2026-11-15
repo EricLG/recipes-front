@@ -8,7 +8,7 @@ import { NgbToast } from '@ng-bootstrap/ng-bootstrap';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { catchError, debounceTime, forkJoin, Observable, of, Subject } from 'rxjs';
 
-import { PlanCandidate, WeeklyRecipePlanService } from './weekly-recipe-plan.service';
+import { WeeklyRecipePlanService } from './weekly-recipe-plan.service';
 import { RecipeStatus, RecipeVegetarianStatus } from '../../enums/recipes.enum';
 import { RecipeDto } from '../../models/recipe';
 import { WeeklyRecipePlanDto, WeeklyRecipePlanItemDto } from '../../models/weekly-recipe-plan';
@@ -36,8 +36,6 @@ export class WeeklyRecipePlan {
     public readonly errorMessage = signal('');
     public readonly message = signal('');
     public readonly saveMessage = signal('');
-    public readonly replacementFor = signal<string | null>(null);
-    public readonly candidates = signal<PlanCandidate[]>([]);
     public readonly notFound = signal(false);
     public readonly targetPending = signal(false);
     public readonly approvedRecipes = signal<RecipeDto[]>([]);
@@ -49,7 +47,6 @@ export class WeeklyRecipePlan {
     });
     public additionId: string | null = null;
     private addRecipesLoaded = false;
-    public replacementId: string | null = null;
     public targetServings = 24;
     public readonly editable = computed(() => this.weekStart() >= currentWeek());
     public readonly current = computed(() => this.weekStart() === currentWeek());
@@ -108,7 +105,6 @@ export class WeeklyRecipePlan {
         this.addRecipesLoaded = false;
         this.loadingAddRecipes.set(false);
         this.addRecipesError.set('');
-        this.replacementFor.set(null);
         this.targetServings = 24;
         this.service.getByWeekStart(this.weekStart()).subscribe({
             next: plan => {
@@ -172,28 +168,9 @@ export class WeeklyRecipePlan {
         this.mutate(this.service.setCooked(this.weekStart(), item.recipeId, !item.cookedAt), { cookedWrite: true });
     }
 
-    public openReplacement(item: WeeklyRecipePlanItemDto): void {
-        if (this.busy() || this.targetPending() || !this.editable()) return;
-        const week = this.weekStart();
-        this.busy.set(true);
-        this.errorMessage.set('');
-        this.replacementFor.set(item.recipeId);
-        this.replacementId = null;
-        this.candidates.set([]);
-        this.service.candidates(this.weekStart()).subscribe({
-            next: recipes => {
-                if (this.weekStart() !== week) return;
-                this.candidates.set(recipes); this.busy.set(false);
-            },
-            error: error => {
-                if (this.weekStart() !== week) return;
-                this.errorMessage.set(this.describeError(error)); this.busy.set(false);
-            },
-        });
-    }
-
-    public replaceRecipe(): void {
-        if (this.replacementFor() && this.replacementId) this.mutate(this.service.replaceRecipe(this.weekStart(), this.replacementFor()!, this.replacementId));
+    public replaceRecipe(item: WeeklyRecipePlanItemDto): void {
+        if (this.busy() || this.targetPending() || !this.editable() || item.cookedAt) return;
+        this.mutate(this.service.replaceRecipe(this.weekStart(), item.recipeId));
     }
 
     private mutate(request: Observable<WeeklyRecipePlanDto>, { completion = false, targetWrite = false, cookedWrite = false }: { completion?: boolean; targetWrite?: boolean; cookedWrite?: boolean } = {}): void {
@@ -211,7 +188,6 @@ export class WeeklyRecipePlan {
                 this.targetPending.set(false);
                 this.additionId = null;
                 this.targetServings = plan.targetServings;
-                this.replacementFor.set(null);
                 this.busy.set(false);
                 if (completion && plan.shortage > 0) {
                     this.message.set(`Toutes les recettes admissibles ont été ajoutées. Il manque encore ${plan.shortage} parts.`);

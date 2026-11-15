@@ -52,21 +52,11 @@
                         <div class="planned-recipe-actions">
                             @if (cookingEditable()) { <button class="btn btn-sm btn-outline-success" [disabled]="busy() || targetPending()" (click)="setCooked(item)">{{ item.cookedAt ? 'Annuler la préparation' : 'Marquer cuisinée' }}</button> }
                             @if (editable()) {
-                                <button class="btn btn-sm btn-outline-secondary" [disabled]="busy() || targetPending() || !!item.cookedAt" (click)="openReplacement(item)">Remplacer</button>
+                                <button class="btn btn-sm btn-outline-secondary" [disabled]="busy() || targetPending() || !!item.cookedAt" (click)="replaceRecipe(item)">Remplacer</button>
                                 <button class="btn btn-sm btn-outline-danger" [disabled]="busy() || targetPending() || !!item.cookedAt" (click)="remove(item)">Supprimer</button>
                             }
                         </div>
                     </div>
-                    @if (replacementFor() === item.recipeId) {
-                        <div class="mt-3">
-                            <label for="replacement">Recette de remplacement</label>
-                            <ng-select labelForId="replacement" [items]="candidates()" bindLabel="name" bindValue="_id" [(ngModel)]="replacementId" [searchable]="true" [disabled]="busy()" notFoundText="Aucune recette admissible">
-                                <ng-template ng-option-tmp let-item="item">{{ item.name }} — {{ item.servings }} parts</ng-template>
-                            </ng-select>
-                            <button class="btn btn-success mt-2" [disabled]="busy() || !replacementId" (click)="replaceRecipe()">Valider</button>
-                            <button class="btn btn-outline-secondary mt-2 ms-2" [disabled]="busy()" (click)="replacementFor.set(null)">Annuler</button>
-                        </div>
-                    }
                 </li>
             } @empty { <li class="list-group-item">Aucune recette planifiée.</li> }
         </ul>

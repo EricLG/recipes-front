@@ -19,7 +19,7 @@ const plan: WeeklyRecipePlanDto = { weekStart: '2026-10-19',
 };
 
 describe('WeeklyRecipePlan', () => {
-    const api = { getByWeekStart: vi.fn(), setTarget: vi.fn(), complete: vi.fn(), candidates: vi.fn(), replaceRecipe: vi.fn(), remove: vi.fn(), setCooked: vi.fn(), add: vi.fn() };
+    const api = { getByWeekStart: vi.fn(), setTarget: vi.fn(), complete: vi.fn(), replaceRecipe: vi.fn(), remove: vi.fn(), setCooked: vi.fn(), add: vi.fn() };
     const recipes = { search: vi.fn(), getDetailRecipe: vi.fn() };
     let week: string;
     beforeEach(() => {
@@ -27,7 +27,7 @@ describe('WeeklyRecipePlan', () => {
         week = '2026-10-19';
         recipes.getDetailRecipe.mockReturnValue(of({ vegetarianStatus: RecipeVegetarianStatus.NON_VEGETARIAN }));
         api.getByWeekStart.mockReturnValue(of(plan)); api.setTarget.mockReturnValue(of(plan));
-        api.complete.mockReturnValue(of(plan)); api.candidates.mockReturnValue(of([{ _id: 'two', name: 'Plat', servings: 2 }]));
+        api.complete.mockReturnValue(of(plan));
         api.replaceRecipe.mockReturnValue(of(plan));
         recipes.search.mockReturnValue(of([{ id: 'one', name: 'Soupe', servings: 4, status: 'approved' }, { id: 'two', name: 'Dessert', servings: 2, status: 'approved' }]));
         api.add.mockReturnValue(of({ ...plan, items: [...plan.items, { ...plan.items[0], recipeId: 'two' }] }));
@@ -207,13 +207,47 @@ describe('WeeklyRecipePlan', () => {
         pending.next({ ...plan, targetServings: 30 });
         expect(component.busy()).toBe(false);
     });
-    it('reports partial completion and offers searchable replacement candidates', () => {
+    it.each(['2026-10-19', '2026-10-26'])('directly replaces a recipe through its button for %s', targetWeek => {
+        week = targetWeek;
+        const replacementPlan = { ...plan, weekStart: week, items: [{ ...plan.items[0], recipeId: 'two', recipeName: 'Plat aléatoire' }] };
+        api.replaceRecipe.mockReturnValue(of(replacementPlan));
         const { component, fixture } = create();
-        component.complete(); expect(component.message()).toContain('20 parts');
-        component.openReplacement(plan.items[0]); fixture.detectChanges();
-        expect(fixture.nativeElement.querySelector('ng-select')).toBeTruthy();
-        component.replacementId = 'two'; component.replaceRecipe();
-        expect(api.replaceRecipe).toHaveBeenCalledWith(week, 'one', 'two');
+        const button = Array.from(fixture.nativeElement.querySelectorAll('.planned-recipe-actions button') as NodeListOf<HTMLButtonElement>).find(button => button.textContent?.trim() === 'Remplacer')!;
+        button.click(); fixture.detectChanges();
+        expect(api.replaceRecipe).toHaveBeenCalledExactlyOnceWith(week, 'one');
+        expect(component.plan()).toEqual(replacementPlan);
+        expect(fixture.nativeElement.textContent).toContain('Plat aléatoire');
+        expect(fixture.nativeElement.querySelector('[for="replacement"]')).toBeNull();
+        expect(fixture.nativeElement.querySelectorAll('ng-select')).toHaveLength(1);
+        expect(component.saveMessage()).toBe('Planning enregistré.');
+    });
+
+    it('blocks repeated replacement clicks while saving and preserves the plan on failure', () => {
+        const pending = new Subject<WeeklyRecipePlanDto>();
+        api.replaceRecipe.mockReturnValue(pending);
+        const { component, fixture } = create();
+        const button = Array.from(fixture.nativeElement.querySelectorAll('.planned-recipe-actions button') as NodeListOf<HTMLButtonElement>).find(button => button.textContent?.trim() === 'Remplacer')!;
+        button.click(); fixture.detectChanges();
+        expect(button.disabled).toBe(true);
+        component.replaceRecipe(plan.items[0]);
+        expect(api.replaceRecipe).toHaveBeenCalledTimes(1);
+        pending.error(new HttpErrorResponse({ status: 400, error: { message: 'Aucune recette admissible pour remplacer cette recette.' } }));
+        fixture.detectChanges();
+        expect(button.disabled).toBe(false);
+        expect(component.plan()).toEqual(plan);
+        expect(fixture.nativeElement.textContent).toContain('Aucune recette admissible pour remplacer cette recette.');
+        expect(component.saveMessage()).toBe('');
+    });
+
+    it('blocks replacement for cooked recipes, past weeks and pending target saves', () => {
+        const { component } = create();
+        component.replaceRecipe({ ...plan.items[0], cookedAt: '2026-10-19T12:00:00Z' });
+        component.weekStart.set('2026-10-12');
+        component.replaceRecipe(plan.items[0]);
+        component.weekStart.set('2026-10-19');
+        component.onTargetChange(30);
+        component.replaceRecipe(plan.items[0]);
+        expect(api.replaceRecipe).not.toHaveBeenCalled();
     });
     it('displays errors from failed immediate saves', () => {
         api.complete.mockReturnValue(throwError(() => new HttpErrorResponse({ status: 0 })));
