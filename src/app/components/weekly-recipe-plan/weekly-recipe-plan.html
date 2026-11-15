@@ -47,6 +47,10 @@
                                     <img src="assets/pictos/vege.png" width="25" height="16" alt="Recette végétarienne" title="Recette végétarienne">
                                 }
                             </div>
+                            @let preparationTime = preparationTimes().get(item.recipeId);
+                            @if (preparationTime != null) {
+                                <small class="planned-recipe-preparation-time text-muted">Préparation : {{ preparationTime }} min</small>
+                            }
                             @if (item.cookedAt) { <span class="badge bg-success align-self-start">Cuisinée</span> }
                         </div>
                         <div class="planned-recipe-actions">

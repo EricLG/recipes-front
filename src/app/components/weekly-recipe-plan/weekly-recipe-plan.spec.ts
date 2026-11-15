@@ -81,6 +81,48 @@ describe('WeeklyRecipePlan', () => {
         expect(fixture.nativeElement.querySelector('.planned-recipe-servings img')).toBeNull();
     });
 
+    it.each(['2026-10-19', '2026-10-12'])('shows available preparation times in minutes for %s without extra detail requests', targetWeek => {
+        week = targetWeek;
+        const ids = ['known', 'zero', 'missing', 'null', 'unavailable'];
+        api.getByWeekStart.mockReturnValue(of({ ...plan, weekStart: week, items: ids.map(recipeId => ({ ...plan.items[0], recipeId })) }));
+        recipes.getDetailRecipe.mockImplementation(id => id === 'unavailable'
+            ? throwError(() => new HttpErrorResponse({ status: 404 }))
+            : of({ preparationTime: id === 'known' ? 45 : id === 'zero' ? 0 : id === 'null' ? null : undefined }));
+        const { fixture } = create();
+        const rows = fixture.nativeElement.querySelectorAll('.planned-recipe-info') as NodeListOf<HTMLElement>;
+        expect(rows[0].textContent).toContain('Préparation : 45 min');
+        expect(rows[1].textContent).toContain('Préparation : 0 min');
+        for (const index of [2, 3, 4]) expect(rows[index].querySelector('.planned-recipe-preparation-time')).toBeNull();
+        expect(recipes.getDetailRecipe).toHaveBeenCalledTimes(ids.length);
+    });
+
+    it('refreshes preparation time after replacement and clears it when missing', () => {
+        recipes.getDetailRecipe.mockReturnValueOnce(of({ preparationTime: 45 }))
+            .mockReturnValueOnce(of({ preparationTime: 15 }))
+            .mockReturnValueOnce(of({}));
+        api.replaceRecipe.mockReturnValue(of({ ...plan, items: [{ ...plan.items[0], recipeId: 'two' }] }));
+        const { component, fixture } = create();
+        expect(fixture.nativeElement.textContent).toContain('Préparation : 45 min');
+        component.replaceRecipe(plan.items[0]); fixture.detectChanges();
+        expect(fixture.nativeElement.textContent).toContain('Préparation : 15 min');
+        expect(fixture.nativeElement.textContent).not.toContain('45 min');
+        component.loadPlan(); fixture.detectChanges();
+        expect(fixture.nativeElement.querySelector('.planned-recipe-preparation-time')).toBeNull();
+    });
+
+    it('ignores stale preparation times after navigating to another week', () => {
+        const pending = new Subject<{ preparationTime: number }>();
+        recipes.getDetailRecipe.mockReturnValueOnce(pending).mockReturnValue(of({ preparationTime: 15 }));
+        const { component, fixture } = create();
+        component.weekStart.set('2026-10-12');
+        api.getByWeekStart.mockReturnValue(of({ ...plan, weekStart: '2026-10-12' }));
+        component.loadPlan(); fixture.detectChanges();
+        expect(fixture.nativeElement.textContent).toContain('Préparation : 15 min');
+        pending.next({ preparationTime: 45 }); pending.complete(); fixture.detectChanges();
+        expect(fixture.nativeElement.textContent).toContain('Préparation : 15 min');
+        expect(fixture.nativeElement.textContent).not.toContain('45 min');
+    });
+
     it('defaults to 24 for an absent plan and creates it explicitly', () => {
         api.getByWeekStart.mockReturnValue(throwError(() => new HttpErrorResponse({ status: 404 })));
         const { component, fixture } = create();
