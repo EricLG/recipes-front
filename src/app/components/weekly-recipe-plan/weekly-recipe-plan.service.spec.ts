@@ -47,12 +47,12 @@ describe('WeeklyRecipePlanService', () => {
         request.flush(plan);
     });
 
-    it('remplace une recette avec l’identifiant de la recette choisie', () => {
-        service.replaceRecipe('2026-10-05', 'recipe-old', 'recipe-new').subscribe();
+    it('demande un remplacement aléatoire sans recette de destination', () => {
+        service.replaceRecipe('2026-10-05', 'recipe-old').subscribe();
 
         const request = httpTestingController.expectOne('/api/weekly-recipe-plans/2026-10-05/recipes/recipe-old/replace');
         expect(request.request.method).toBe('PUT');
-        expect(request.request.body).toEqual({ recipeId: 'recipe-new' });
+        expect(request.request.body).toEqual({});
         request.flush(plan);
     });
 
