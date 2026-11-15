@@ -20,7 +20,9 @@
         </p>
     }
     @if (message()) { <p class="alert alert-info" role="status">{{ message() }}</p> }
-    @if (!editable()) { <p class="alert alert-secondary">Cette semaine est en lecture seule.</p> }
+    @if (!editable()) {
+        <p class="alert alert-secondary">Cette semaine est en lecture seule.@if (cookingEditable()) { Vous pouvez encore marquer les recettes comme cuisinées ou annuler leur préparation. }</p>
+    }
     @if (busy()) { <p role="status">Chargement…</p> }
     @if (editable() && (plan() || notFound())) {
         <form class="d-flex flex-wrap gap-2 align-items-end mb-3" (ngSubmit)="saveTarget()">
@@ -48,7 +50,7 @@
                             @if (item.cookedAt) { <span class="badge bg-success align-self-start">Cuisinée</span> }
                         </div>
                         <div class="planned-recipe-actions">
-                            @if (current()) { <button class="btn btn-sm btn-outline-success" [disabled]="busy() || targetPending()" (click)="setCooked(item)">{{ item.cookedAt ? 'Annuler la cuisson' : 'Marquer cuisinée' }}</button> }
+                            @if (cookingEditable()) { <button class="btn btn-sm btn-outline-success" [disabled]="busy() || targetPending()" (click)="setCooked(item)">{{ item.cookedAt ? 'Annuler la préparation' : 'Marquer cuisinée' }}</button> }
                             @if (editable()) {
                                 <button class="btn btn-sm btn-outline-secondary" [disabled]="busy() || targetPending() || !!item.cookedAt" (click)="openReplacement(item)">Remplacer</button>
                                 <button class="btn btn-sm btn-outline-danger" [disabled]="busy() || targetPending() || !!item.cookedAt" (click)="remove(item)">Supprimer</button>

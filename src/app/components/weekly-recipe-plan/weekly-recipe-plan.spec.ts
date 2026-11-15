@@ -1,7 +1,7 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { TestBed } from '@angular/core/testing';
 import { ActivatedRoute, convertToParamMap, provideRouter } from '@angular/router';
-import { of, Subject, throwError } from 'rxjs';
+import { Observable, of, Subject, throwError } from 'rxjs';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { WeeklyRecipePlan } from './weekly-recipe-plan';
@@ -221,14 +221,68 @@ describe('WeeklyRecipePlan', () => {
         expect(component.errorMessage()).toBeTruthy(); expect(component.busy()).toBe(false);
         expect(component.plan()).toEqual(plan);
     });
-    it('locks old plans and next-week cooking and bounds future navigation', () => {
-        week = '2026-10-12'; const { component, fixture } = create();
+    it.each(['2026-10-19', '2026-10-12'])('saves and cancels cooking through the button for %s', targetWeek => {
+        week = targetWeek;
+        const initialPlan = { ...plan, weekStart: week };
+        api.getByWeekStart.mockReturnValue(of(initialPlan));
+        api.setCooked.mockImplementation((_week, _recipeId, cooked) => of({
+            ...initialPlan, items: [{ ...plan.items[0], cookedAt: cooked ? '2026-10-19T12:00:00Z' : null }],
+        }));
+        const { component, fixture } = create();
+        const button = () => fixture.nativeElement.querySelector('.planned-recipe-actions button') as HTMLButtonElement;
+        expect(component.cookingEditable()).toBe(true);
+        expect(button().textContent).toContain('Marquer cuisinée');
+        button().click(); fixture.detectChanges();
+        expect(api.setCooked).toHaveBeenLastCalledWith(week, 'one', true);
+        expect(component.plan()?.items[0].cookedAt).toBeTruthy();
+        expect(fixture.nativeElement.querySelector('.badge')?.textContent).toContain('Cuisinée');
+        expect(button().textContent).toContain('Annuler la préparation');
+        button().click(); fixture.detectChanges();
+        expect(api.setCooked).toHaveBeenLastCalledWith(week, 'one', false);
+        expect(component.plan()?.items[0].cookedAt).toBeNull();
+        expect(component.saveMessage()).toBe('Planning enregistré.');
+    });
+
+    it('keeps other previous-week changes locked', () => {
+        week = '2026-10-12';
+        const subscribed = vi.fn();
+        api.complete.mockReturnValue(new Observable(subscribed));
+        const { component, fixture } = create();
         expect(component.editable()).toBe(false);
         expect(fixture.nativeElement.textContent).toContain('lecture seule');
-        component.complete(); expect(api.complete).toHaveBeenCalledTimes(1);
-        // Observable is constructed, but no request is subscribed for a read-only week.
-        component.weekStart.set('2026-10-26'); fixture.detectChanges();
-        expect(component.current()).toBe(false); expect(component.canNext()).toBe(false);
+        expect(fixture.nativeElement.textContent).toContain('Vous pouvez encore marquer');
+        expect(fixture.nativeElement.textContent).not.toContain('Remplacer');
+        expect(fixture.nativeElement.textContent).not.toContain('Supprimer');
+        expect(fixture.nativeElement.querySelector('#target-servings')).toBeNull();
+        expect(fixture.nativeElement.querySelector('#add-recipe')).toBeNull();
+        component.complete();
+        expect(subscribed).not.toHaveBeenCalled();
+    });
+
+    it.each(['2026-10-05', '2026-10-26'])('hides cooking and blocks writes for %s', targetWeek => {
+        week = targetWeek;
+        const subscribed = vi.fn();
+        api.setCooked.mockReturnValue(new Observable(subscribed));
+        const { component, fixture } = create();
+        expect(component.cookingEditable()).toBe(false);
         expect(fixture.nativeElement.textContent).not.toContain('Marquer cuisinée');
+        component.setCooked(plan.items[0]);
+        expect(subscribed).not.toHaveBeenCalled();
+        component.weekStart.set('2026-10-26');
+        expect(component.current()).toBe(false); expect(component.canNext()).toBe(false);
+    });
+
+    it('disables previous-week cooking while saving and shows save errors', () => {
+        week = '2026-10-12';
+        const pending = new Subject<WeeklyRecipePlanDto>();
+        api.setCooked.mockReturnValue(pending);
+        const { component, fixture } = create();
+        const button = fixture.nativeElement.querySelector('.planned-recipe-actions button') as HTMLButtonElement;
+        button.click(); fixture.detectChanges();
+        expect(button.disabled).toBe(true);
+        pending.error(new HttpErrorResponse({ status: 500 })); fixture.detectChanges();
+        expect(button.disabled).toBe(false);
+        expect(component.errorMessage()).toBeTruthy();
+        expect(component.plan()?.items[0].cookedAt).toBeNull();
     });
 });

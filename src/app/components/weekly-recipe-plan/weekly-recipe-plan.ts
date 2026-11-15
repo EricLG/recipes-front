@@ -53,6 +53,10 @@ export class WeeklyRecipePlan {
     public targetServings = 24;
     public readonly editable = computed(() => this.weekStart() >= currentWeek());
     public readonly current = computed(() => this.weekStart() === currentWeek());
+    public readonly cookingEditable = computed(() => {
+        const current = currentWeek();
+        return this.weekStart() === current || this.weekStart() === shiftWeek(current, -1);
+    });
     public readonly canNext = computed(() => this.weekStart() < shiftWeek(currentWeek(), 1));
     public readonly weekLabel = computed(() => weekLabel(this.weekStart()));
 
@@ -123,7 +127,7 @@ export class WeeklyRecipePlan {
     public saveTarget(): void {
         if (!this.plan() && !this.notFound()) return;
         if (Number.isInteger(this.targetServings) && this.targetServings > 0 && this.targetServings !== this.plan()?.targetServings) {
-            this.mutate(this.service.setTarget(this.weekStart(), this.targetServings), false, true);
+            this.mutate(this.service.setTarget(this.weekStart(), this.targetServings), { targetWrite: true });
         }
     }
 
@@ -159,13 +163,13 @@ export class WeeklyRecipePlan {
     }
 
     public complete(): void {
-        this.mutate(this.service.complete(this.weekStart()), true);
+        this.mutate(this.service.complete(this.weekStart()), { completion: true });
     }
     public remove(item: WeeklyRecipePlanItemDto): void {
         this.mutate(this.service.remove(this.weekStart(), item.recipeId));
     }
     public setCooked(item: WeeklyRecipePlanItemDto): void {
-        this.mutate(this.service.setCooked(this.weekStart(), item.recipeId, !item.cookedAt));
+        this.mutate(this.service.setCooked(this.weekStart(), item.recipeId, !item.cookedAt), { cookedWrite: true });
     }
 
     public openReplacement(item: WeeklyRecipePlanItemDto): void {
@@ -192,8 +196,8 @@ export class WeeklyRecipePlan {
         if (this.replacementFor() && this.replacementId) this.mutate(this.service.replaceRecipe(this.weekStart(), this.replacementFor()!, this.replacementId));
     }
 
-    private mutate(request: Observable<WeeklyRecipePlanDto>, completion = false, targetWrite = false): void {
-        if (this.busy() || !this.editable() || (this.targetPending() && !targetWrite)) return;
+    private mutate(request: Observable<WeeklyRecipePlanDto>, { completion = false, targetWrite = false, cookedWrite = false }: { completion?: boolean; targetWrite?: boolean; cookedWrite?: boolean } = {}): void {
+        if (this.busy() || !(cookedWrite ? this.cookingEditable() : this.editable()) || (this.targetPending() && !targetWrite)) return;
         const week = this.weekStart();
         this.busy.set(true);
         this.errorMessage.set('');

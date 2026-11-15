@@ -19,7 +19,7 @@ The Recipe domain depends on the Food domain.
 - Personal weekly plans have a unique userId/weekStart (Monday string), targetServings (default 24), totalServings, shortage, surplus and items.
 - Plan items snapshot recipeId, recipeName, servings, source and cookedAt; no duplicates or preparation days.
 - Completion preserves choices; random/replacement candidates are approved seasonal MAIN or OTHERS recipes not cooked in S−1/S−2. Manual additions accept any approved recipe.
-- Current/next weeks editable, past weeks read-only; cooking only editable in current week.
+- Current/next weeks are editable; past weeks are read-only except that cooking can be marked/unmarked in the previous week. Cooking is editable only in the current and previous weeks, based on the Europe/Paris calendar.
 - Shopping lists belong to user/week and snapshot exactly two stores and items of kind ingredient/free. Both kinds have itemKey, foodName, store, checked and inStock; only ingredients require foodId, category, quantity and unit.
 - User.shoppingStores provides defaults for new lists. See ../shopping-lists-frontend.md and backend docs/api/weekly-recipe-plans.md.
 
